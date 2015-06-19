@@ -24,7 +24,7 @@
 		"test"
 	],
 	"dependencies": {
-		"qwest": "git@github.com:elo7/qwest.git#f08e4afed7faf6265707066bf0beaa5b663bc7a5"
+		"qwest": "https://github.com/elo7/qwest.git#f08e4afed7faf6265707066bf0beaa5b663bc7a5"
 	},
 	"devDependencies": {
 		"async-define": "elo7/async-define"
