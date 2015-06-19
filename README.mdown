@@ -1,0 +1,98 @@
+# Ajax-amd
+
+_Ajax-amd is an ajax library_
+
+Ajax.js is a library that helps ajax request. This library uses [amd](http://en.wikipedia.org/wiki/Asynchronous_module_definition) structure.
+
+[![Build Status](https://travis-ci.org/elo7/ajax-amd.svg?branch=master)](https://travis-ci.org/elo7/ajax-amd)
+
+## Install
+
+Install with [Bower](http://bower.io): `bower install ajax-amd`
+
+## Dependency
+
+Ajax-amd depends on an [amd](http://en.wikipedia.org/wiki/Asynchronous_module_definition) implementation. We suggest [async-define](https://gist.github.com/sergiolopes/5778124) implementation for dependency lookup.
+Ajax-amd also depends on [qwest](https://github.com/pyrsmk/qwest) and a stable version is already defined in bower configuration. You only need to install with [Bower](http://bower.io) and loads ajax-amd and qwest files on your page.
+
+## Methods
+
+#### get
+`.get(url, data [,callbacks] [,config])`
+
+###### Description:
+Exeutes an ajax request using `get` http method.
+
+###### Sample:
+``` js
+define(['ajax'], function(ajax) {
+	ajax.get('http://domain.com/ajax', {
+		'data': 'value'
+	}, {
+		'success': function(response) {
+			// success callback
+		},
+		'error': function(response) {
+			// error callback
+		},
+		'complete': function(response) {
+			// complete callback
+		}
+	}, {
+		retries: 1,     // number of retries
+		timeout: 1000,  // timeout in ms
+		async: true    // asynchronous
+	});
+});
+```
+
+#### post
+`.post(url, data [,callbacks] [,config])`
+
+###### Description:
+Exeutes an ajax request using `post` http method.
+
+###### Sample:
+``` js
+define(['ajax'], function(ajax) {
+	ajax.post('http://domain.com/ajax', {
+		'data': 'value'
+	}, {
+		'success': function(response) {
+			// success callback
+		},
+		'error': function(response) {
+			// error callback
+		},
+		'complete': function(response) {
+			// complete callback
+		}
+	}, {
+		retries: 1,     // number of retries
+		timeout: 1000,  // timeout in ms
+		async: true    // asynchronous
+	});
+});
+```
+
+#### serializeObject
+`.serializeObject(form)`
+
+###### Description:
+Serialize form fields to json. It can be used as a data to the ajax function.
+
+###### Sample:
+``` js
+define(['ajax'], function(ajax) {
+	var serializedForm = ajax.serializeObject(document.querySelector('form'));
+});
+```
+
+
+## License
+
+Ajax-amd is released under the [BSD](https://github.com/elo7/ajax-amd/blob/master/LICENSE). Have at it.
+
+* * *
+
+Copyright :copyright: 2015 Elo7
