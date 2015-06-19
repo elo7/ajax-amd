@@ -1,0 +1,32 @@
+{
+	"name": "ajax-amd",
+	"version": "1.0.0-SNAPSHOT",
+	"homepage": "https://github.com/elo7/ajax-amd",
+	"description": "A small ajax library",
+	"main": "ajax.js",
+	"moduleType": [
+		"amd"
+	],
+	"keywords": [
+		"ajax",
+		"js",
+		"get",
+		"post"
+	],
+	"authors": [
+		"Elo7"
+	],
+	"license": "BSD",
+	"ignore": [
+		"**/.*",
+		"node_modules",
+		"bower_components",
+		"test"
+	],
+	"dependencies": {
+		"qwest": "git@github.com:elo7/qwest.git#f08e4afed7faf6265707066bf0beaa5b663bc7a5"
+	},
+	"devDependencies": {
+		"async-define": "elo7/async-define"
+	}
+}
