@@ -33,6 +33,7 @@ define('ajax', ['qwest'], function(qwest) {
 
 			qwest.get(url, data, config)
 				.then(function(response){
+					response.header = {'status': this.status};
 					if (this.status == 203 && config.login && typeof config.login === "function") {
 						config.login(response);
 					} else {
@@ -60,6 +61,7 @@ define('ajax', ['qwest'], function(qwest) {
 
 			qwest.post(url, data, config)
 				.then(function(response){
+					response.header = {'status': this.status};
 					if(callbacks.success && typeof callbacks.success === "function"){
 						callbacks.success(response);
 					}

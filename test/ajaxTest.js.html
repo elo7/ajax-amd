@@ -86,6 +86,7 @@
               }
             });
             assert.equal(expected.name, "value");
+            assert.equal(expected.header.status, "200");
           });
 
           it("should call ajax and return complete on success", function() {
@@ -127,6 +128,7 @@
             });
             setTimeout(function(){
               assert.equal(expected.name, "value");
+              assert.equal(expected.header.status, "200");
             },500);
           });
 
