@@ -32,23 +32,23 @@ define('ajax', ['qwest'], function(qwest) {
 			config.async = !!config.async;
 
 			qwest.get(url, data, config)
-				.then(function(response){
+				.then(function(data){
 					if (this.status == 203 && config.login && typeof config.login === "function") {
-						config.login(response);
+						config.login(data, this);
 					} else {
 						if(callbacks.success && typeof callbacks.success === "function"){
-							callbacks.success(response);
+							callbacks.success(data, this);
 						}
 					}
 				})
-				['catch'](function(response){
+				['catch'](function(data){
 					if(callbacks.error && typeof callbacks.error === "function"){
-						callbacks.error(response);
+						callbacks.error(data, this);
 					}
 				})
 				.complete(function(){
 					if(callbacks.complete && typeof callbacks.complete === "function"){
-						callbacks.complete();
+						callbacks.complete(this);
 					}
 				});
 		},
@@ -59,19 +59,19 @@ define('ajax', ['qwest'], function(qwest) {
 			config.async = !!config.async;
 
 			qwest.post(url, data, config)
-				.then(function(response){
+				.then(function(data){
 					if(callbacks.success && typeof callbacks.success === "function"){
-						callbacks.success(response);
+						callbacks.success(data, this);
 					}
 				})
-				['catch'](function(response){
+				['catch'](function(data){
 					if(callbacks.error && typeof callbacks.error === "function"){
-						callbacks.error(response, this);
+						callbacks.error(data, this);
 					}
 				})
 				.complete(function(){
 					if(callbacks.complete && typeof callbacks.complete === "function"){
-						callbacks.complete();
+						callbacks.complete(this);
 					}
 				});
 		},
