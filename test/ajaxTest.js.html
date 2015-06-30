@@ -81,18 +81,19 @@
           it("should call ajax and return success", function() {
             var expected;
             ajax.get("/test/ajax.json", {}, {
-              success: function(response) {
+              success: function(response, xhr) {
                 expected = response;
+                expectedHeader = xhr;
               }
             });
             assert.equal(expected.name, "value");
-            assert.equal(expected.header.status, "200");
+            assert.equal(expectedHeader.status, "200");
           });
 
           it("should call ajax and return complete on success", function() {
             var expected = false;
             ajax.get("/test/ajax.json", {}, {
-              complete: function(response) {
+              complete: function(xhr) {
                 expected = true;
               }
             });
@@ -102,17 +103,19 @@
           it("should call ajax and return error", function() {
             var expected;
             ajax.get("/test/not-exist.json", {}, {
-              error: function(response) {
+              error: function(response, xhr) {
                 expected = response;
+                expectedHeader = xhr;
               }
             });
             assert.match(expected, /404 \(Not Found\) \(\/test\/not\-exist\.json.*\)/);
+            assert.equal(expectedHeader.status, "404");
           });
 
           it("should call ajax and return complete on error", function() {
             var expected = false;
             ajax.get("/test/not-exist.json", {}, {
-              complete: function(response) {
+              complete: function(xhr) {
                 expected = true;
               }
             });
@@ -122,20 +125,21 @@
           it("should call post and return success", function() {
             var expected;
             ajax.post("/test/ajax.json", {}, {
-              success: function(response) {
+              success: function(response, xhr) {
                 expected = response;
+                expectedHeader = xhr;
               }
             });
             setTimeout(function(){
               assert.equal(expected.name, "value");
-              assert.equal(expected.header.status, "200");
+              assert.equal(expectedHeader.status, "200");
             },500);
           });
 
           it("should call post and return complete on success", function() {
             var expected = false;
             ajax.post("/test/ajax.json", {}, {
-              complete: function(response) {
+              complete: function(xhr) {
                 expected = true;
               }
             }, {async: false});
@@ -155,11 +159,13 @@
           it("should call post and return complete on error", function() {
             var expected = false;
             ajax.post("/test/not-exist.json", {}, {
-              complete: function(response) {
+              complete: function(xhr) {
                 expected = true;
+                expectedHeader = xhr;
               }
             }, {async: false});
             assert.equal(expected, true);
+            assert.equal(expectedHeader.status, "404");
           });
 
           it("should serialize a form element and return a json", function() {

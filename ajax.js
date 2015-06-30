@@ -33,23 +33,22 @@ define('ajax', ['qwest'], function(qwest) {
 
 			qwest.get(url, data, config)
 				.then(function(response){
-					response.header = {'status': this.status};
 					if (this.status == 203 && config.login && typeof config.login === "function") {
-						config.login(response);
+						config.login(response, this);
 					} else {
 						if(callbacks.success && typeof callbacks.success === "function"){
-							callbacks.success(response);
+							callbacks.success(response, this);
 						}
 					}
 				})
 				['catch'](function(response){
 					if(callbacks.error && typeof callbacks.error === "function"){
-						callbacks.error(response);
+						callbacks.error(response, this);
 					}
 				})
 				.complete(function(){
 					if(callbacks.complete && typeof callbacks.complete === "function"){
-						callbacks.complete();
+						callbacks.complete(this);
 					}
 				});
 		},
@@ -61,9 +60,8 @@ define('ajax', ['qwest'], function(qwest) {
 
 			qwest.post(url, data, config)
 				.then(function(response){
-					response.header = {'status': this.status};
 					if(callbacks.success && typeof callbacks.success === "function"){
-						callbacks.success(response);
+						callbacks.success(response, this);
 					}
 				})
 				['catch'](function(response){
@@ -73,7 +71,7 @@ define('ajax', ['qwest'], function(qwest) {
 				})
 				.complete(function(){
 					if(callbacks.complete && typeof callbacks.complete === "function"){
-						callbacks.complete();
+						callbacks.complete(this);
 					}
 				});
 		},
