@@ -29,13 +29,13 @@ define(['ajax'], function(ajax) {
 	ajax.get('http://domain.com/ajax', {
 		'data': 'value'
 	}, {
-		'success': function(response) {
+		'success': function(response [,xhr]) {
 			// success callback
 		},
-		'error': function(response) {
+		'error': function(response [,xhr]) {
 			// error callback
 		},
-		'complete': function(response) {
+		'complete': function([xhr]) {
 			// complete callback
 		}
 	}, {
@@ -58,13 +58,13 @@ define(['ajax'], function(ajax) {
 	ajax.post('http://domain.com/ajax', {
 		'data': 'value'
 	}, {
-		'success': function(response) {
+		'success': function(response [,xhr]) {
 			// success callback
 		},
-		'error': function(response) {
+		'error': function(response [,xhr]) {
 			// error callback
 		},
-		'complete': function(response) {
+		'complete': function([xhr]) {
 			// complete callback
 		}
 	}, {
