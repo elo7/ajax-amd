@@ -33,12 +33,8 @@ define('ajax', ['qwest'], function(qwest) {
 
 			qwest.get(url, data, config)
 				.then(function(data){
-					if (this.status == 203 && config.login && typeof config.login === "function") {
-						config.login(data, this);
-					} else {
-						if(callbacks.success && typeof callbacks.success === "function"){
-							callbacks.success(data, this);
-						}
+					if(callbacks.success && typeof callbacks.success === "function"){
+						callbacks.success(data, this);
 					}
 				})
 				['catch'](function(data){
