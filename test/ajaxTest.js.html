@@ -108,7 +108,7 @@
                 expectedHeader = xhr;
               }
             });
-            assert.match(expected, /404 \(Not Found\) \(\/test\/not\-exist\.json.*\)/);
+            assert.equal(expected, "Not Found");
             assert.equal(expectedHeader.status, "404");
           });
 
