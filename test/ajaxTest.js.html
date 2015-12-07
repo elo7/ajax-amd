@@ -124,7 +124,7 @@
           });
 
           it("should call post and return success", function() {
-            var expected;
+            var expected, expectedHeader;
             ajax.post("/test/ajax.json", {}, {
               success: function(response, xhr) {
                 expected = response;
@@ -132,7 +132,7 @@
               }
             });
             setTimeout(function(){
-              assert.equal(expected.name, "value");
+              assert.equal(JSON.parse(expected).name, "value");
               assert.equal(expectedHeader.status, "200");
             },500);
           });
@@ -148,10 +148,11 @@
           });
 
           it("should call post and return error", function() {
-            var expected;
+            var expected, expectedHeader;
             ajax.post("/test/not-exist.json", {}, {
-              error: function(response) {
+              error: function(response, xhr) {
                 expected = response;
+                expectedHeader = xhr;
               }
             }, {async: false});
             assert.equal(expected, "Not Found");

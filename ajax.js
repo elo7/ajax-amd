@@ -70,11 +70,11 @@ define('ajax', ['qwest'], function(qwest) {
 				requestObj = new ActiveXObject("Microsoft.XMLHTTP");
 			}
 
-			requestObj.open("POST", url, true);
+			requestObj.open("POST", url, config.async);
 			if (requestObj) {
 				requestObj.onreadystatechange = function () {
 					if(callbacks.success && typeof callbacks.success === "function") {
-						var json = JSON.parse(requestObj["responseText"]);
+						var json = JSON.stringify(requestObj.responseText);
 						callbacks.success(requestObj.responseText, this);
 					}
 					if (callbacks.error && typeof callbacks.error === "function") {
