@@ -1,4 +1,4 @@
-define('ajax', ['qwest'], function(qwest) {
+define('ajax', [], function() {
 	if (!String.prototype.trim) {
 		(function(){
 			// Make sure we trim BOM and NBSP
