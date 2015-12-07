@@ -86,6 +86,7 @@
                 expectedHeader = xhr;
               }
             });
+
             assert.equal(expected.name, "value");
             assert.equal(expectedHeader.status, "200");
           });
@@ -153,7 +154,8 @@
                 expected = response;
               }
             }, {async: false});
-            assert.match(expected, /404 \(Not Found\) \(\/test\/not\-exist\.json.*\)/);
+            assert.equal(expected, "Not Found");
+            assert.equal(expectedHeader.status, "404");
           });
 
           it("should call post and return complete on error", function() {

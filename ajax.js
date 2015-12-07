@@ -53,7 +53,7 @@ define('ajax', ['qwest'], function(qwest) {
 						callbacks.complete(this);
 					}
 				}
-				requestObj.send(null);
+				requestObj.send();
 			}
 		},
 
@@ -62,22 +62,30 @@ define('ajax', ['qwest'], function(qwest) {
 			var config = config || {};
 			config.async = !!config.async;
 
-			qwest.post(url, data, config)
-				.then(function(data){
-					if(callbacks.success && typeof callbacks.success === "function"){
-						callbacks.success(data, this);
+			var requestObj = false;
+
+			if (window.XMLHttpRequest) {
+				requestObj = new XMLHttpRequest();
+			} else if (window.ActiveXObject) {
+				requestObj = new ActiveXObject("Microsoft.XMLHTTP");
+			}
+
+			requestObj.open("POST", url, true);
+			if (requestObj) {
+				requestObj.onreadystatechange = function () {
+					if(callbacks.success && typeof callbacks.success === "function") {
+						var json = JSON.parse(requestObj["responseText"]);
+						callbacks.success(requestObj.responseText, this);
 					}
-				})
-				['catch'](function(data){
-					if(callbacks.error && typeof callbacks.error === "function"){
-						callbacks.error(data, this);
+					if (callbacks.error && typeof callbacks.error === "function") {
+						callbacks.error(requestObj.statusText, this);
 					}
-				})
-				.complete(function(){
-					if(callbacks.complete && typeof callbacks.complete === "function"){
+					if (callbacks.complete && typeof callbacks.complete === "function") {
 						callbacks.complete(this);
 					}
-				});
+				}
+				requestObj.send();
+			}
 		},
 
 		'serializeObject': function(form){
