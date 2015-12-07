@@ -75,7 +75,7 @@ define('ajax', [], function() {
 				requestObj.onreadystatechange = function () {
 					if(callbacks.success && typeof callbacks.success === "function") {
 						var json = JSON.stringify(requestObj.responseText);
-						callbacks.success(requestObj.responseText, this);
+						callbacks.success(json, this);
 					}
 					if (callbacks.error && typeof callbacks.error === "function") {
 						callbacks.error(requestObj.statusText, this);
