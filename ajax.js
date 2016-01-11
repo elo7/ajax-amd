@@ -25,33 +25,53 @@ define('ajax', [], function() {
 		};
 	}
 
+	function urlEncode(data) {
+		return Object.keys(data).map(function(k) {
+			return encodeURIComponent(k) + '=' + encodeURIComponent(data[k])
+		}).join('&');
+	}
+
+	function getRequestObj() {
+		if (window.XMLHttpRequest) {
+			return new XMLHttpRequest();
+		} else if (window.ActiveXObject) {
+			return new ActiveXObject("Microsoft.XMLHTTP");
+		}
+	}
+
+	function handleResponse(requestObj, callbacks) {
+		if (requestObj.readyState !== 4) {
+			return;
+		}
+		if(requestObj.status === 200 && callbacks.success && typeof callbacks.success === "function") {
+			callbacks.success(JSON.parse(requestObj.responseText), requestObj);
+		} else if (callbacks.error && typeof callbacks.error === "function") {
+			callbacks.error(requestObj.statusText, requestObj);
+		}
+		if (callbacks.complete && typeof callbacks.complete === "function") {
+			callbacks.complete(requestObj);
+		}
+	}
+
+	function setHeaders(requestObj) {
+		requestObj.setRequestHeader("Accept", "application/json");
+		requestObj.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+		requestObj.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+	}
+
 	return {
 		'get': function(url, data, callbacks, config){
 			var callbacks = callbacks || {};
 			var config = config || {};
 			config.async = !!config.async;
 
-			var requestObj = false;
+			var requestObj = getRequestObj();
 
-			if (window.XMLHttpRequest) {
-				requestObj = new XMLHttpRequest();
-			} else if (window.ActiveXObject) {
-				requestObj = new ActiveXObject("Microsoft.XMLHTTP");
-			}
-
-			requestObj.open("GET", url, config.async);
 			if (requestObj) {
+				requestObj.open("GET", url, config.async);
+				setHeaders(requestObj);
 				requestObj.onreadystatechange = function () {
-					if(callbacks.success && typeof callbacks.success === "function") {
-						var json = JSON.parse(requestObj.responseText);
-						callbacks.success(json, this);
-					}
-					if (callbacks.error && typeof callbacks.error === "function") {
-						callbacks.error(requestObj.statusText, this);
-					}
-					if (callbacks.complete && typeof callbacks.complete === "function") {
-						callbacks.complete(this);
-					}
+					handleResponse(this, callbacks);
 				}
 				requestObj.send();
 			}
@@ -62,29 +82,15 @@ define('ajax', [], function() {
 			var config = config || {};
 			config.async = !!config.async;
 
-			var requestObj = false;
+			var requestObj = getRequestObj();
 
-			if (window.XMLHttpRequest) {
-				requestObj = new XMLHttpRequest();
-			} else if (window.ActiveXObject) {
-				requestObj = new ActiveXObject("Microsoft.XMLHTTP");
-			}
-
-			requestObj.open("POST", url, config.async);
 			if (requestObj) {
+				requestObj.open("POST", url, config.async);
+				setHeaders(requestObj);
 				requestObj.onreadystatechange = function () {
-					if(callbacks.success && typeof callbacks.success === "function") {
-						var json = JSON.stringify(requestObj.responseText);
-						callbacks.success(json, this);
-					}
-					if (callbacks.error && typeof callbacks.error === "function") {
-						callbacks.error(requestObj.statusText, this);
-					}
-					if (callbacks.complete && typeof callbacks.complete === "function") {
-						callbacks.complete(this);
-					}
+					handleResponse(this, callbacks);
 				}
-				requestObj.send();
+				requestObj.send(urlEncode(data));
 			}
 		},
 

@@ -77,97 +77,76 @@
             assert.equal(arrayEquals(knownMethods(), current), true);
           });
 
-          it("should call ajax and return success", function() {
-            var expected;
+          it("should call ajax and return success", function(done) {
             ajax.get("/test/ajax.json", {}, {
               success: function(response, xhr) {
-                expected = response;
-                expectedHeader = xhr;
+                assert.equal(response.name, "value");
+                assert.equal(xhr.status, "200");
+                done();
               }
             });
-
-            assert.equal(expected.name, "value");
-            assert.equal(expectedHeader.status, "200");
           });
 
-          it("should call ajax and return complete on success", function() {
-            var expected = false;
+          it("should call ajax and return complete on success", function(done) {
             ajax.get("/test/ajax.json", {}, {
               complete: function(xhr) {
-                expected = true;
+                done();
               }
             });
-            assert.equal(expected, true);
           });
 
-          it("should call ajax and return error", function() {
-            var expected;
+          it("should call ajax and return error", function(done) {
             ajax.get("/test/not-exist.json", {}, {
               error: function(response, xhr) {
-                expected = response;
-                expectedHeader = xhr;
+                assert.equal(response, "Not Found");
+                assert.equal(xhr.status, "404");
+                done();
               }
             });
-            assert.equal(expected, "Not Found");
-            assert.equal(expectedHeader.status, "404");
           });
 
-          it("should call ajax and return complete on error", function() {
-            var expected = false;
+          it("should call ajax and return complete on error", function(done) {
             ajax.get("/test/not-exist.json", {}, {
               complete: function(xhr) {
-                expected = true;
+                done();
               }
             });
-            assert.equal(expected, true);
           });
 
-          it("should call post and return success", function() {
-            var expected, expectedHeader;
+          it("should call post and return success", function(done) {
             ajax.post("/test/ajax.json", {}, {
               success: function(response, xhr) {
-                expected = response;
-                expectedHeader = xhr;
+                assert.equal(response.name, "value");
+                assert.equal(xhr.status, "200");
+                done();
               }
             });
-            setTimeout(function(){
-              assert.equal(JSON.parse(expected).name, "value");
-              assert.equal(expectedHeader.status, "200");
-            },500);
           });
 
-          it("should call post and return complete on success", function() {
-            var expected = false;
+          it("should call post and return complete on success", function(done) {
             ajax.post("/test/ajax.json", {}, {
               complete: function(xhr) {
-                expected = true;
+                done();
               }
-            }, {async: false});
-            assert.equal(expected, true);
+            });
           });
 
-          it("should call post and return error", function() {
-            var expected, expectedHeader;
+          it("should call post and return error", function(done) {
             ajax.post("/test/not-exist.json", {}, {
               error: function(response, xhr) {
-                expected = response;
-                expectedHeader = xhr;
+                assert.equal(response, "Not Found");
+                assert.equal(xhr.status, "404");
+                done();
               }
-            }, {async: false});
-            assert.equal(expected, "Not Found");
-            assert.equal(expectedHeader.status, "404");
+            });
           });
 
-          it("should call post and return complete on error", function() {
-            var expected = false;
+          it("should call post and return complete on error", function(done) {
             ajax.post("/test/not-exist.json", {}, {
               complete: function(xhr) {
-                expected = true;
-                expectedHeader = xhr;
+                done();
               }
-            }, {async: false});
-            assert.equal(expected, true);
-            assert.equal(expectedHeader.status, "404");
+            });
           });
 
           it("should serialize a form element and return a json", function() {
