@@ -47,6 +47,10 @@ define('ajax', [], function() {
 		}
 	}
 
+	function isSuccess(status) {
+		return status >= 200 && status < 300;
+	}
+
 	function handleResponse(requestObj, callbacks) {
 		var responseType = requestObj.getResponseHeader("Content-Type") || "";
 		var responseContent = "";
@@ -63,7 +67,7 @@ define('ajax', [], function() {
 			responseContent = requestObj.responseText;
 		}
 
-		if (requestObj.status === 200 && callbacks.success && typeof callbacks.success === "function") {
+		if (isSuccess(requestObj.status) && callbacks.success && typeof callbacks.success === "function") {
 			callbacks.success(responseContent, requestObj);
 		} else if (callbacks.error && typeof callbacks.error === "function") {
 			callbacks.error(requestObj.statusText, requestObj);
