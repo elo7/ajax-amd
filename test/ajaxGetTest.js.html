@@ -101,6 +101,25 @@
               }
             });
           });
+
+          it("should call ajax and return success with CORS", function(done) {
+            ajax.get("http://127.0.0.1:8888/test/ajax.json", {}, {
+              success: function(response, xhr) {
+                assert.equal(response.name, "value");
+                assert.equal(xhr.status, "200");
+                done();
+              }
+            });
+          });
+
+          it("should call ajax and not include X-Requested-With header with CORS", function(done) {
+            ajax.get("http://127.0.0.1:8888/test/ajax.json", {}, {
+              success: function(response, xhr) {
+                assert.isUndefined(xhr.headers["X-Requested-With"]);
+                done();
+              }
+            });
+          });
         });
       });
     </script>

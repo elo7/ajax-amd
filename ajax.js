@@ -67,11 +67,16 @@ define('ajax', [], function() {
 		}
 	}
 
-	function setHeaders(requestObj, method, configHeaders) {
+	function setHeaders(url, requestObj, method, configHeaders) {
 		var headerValues = {};
+		var host = url.match(/\/\/(.+?)\//);
+		var crossOrigin = host && (host[1] ? host[1] != window.location.host : false);
 
-		headerValues['X-Requested-With'] = 'XMLHttpRequest';
 		headerValues["Accept"] = configHeaders["Accept"] || "*/*";
+
+		if(!crossOrigin) {
+			headerValues['X-Requested-With'] = 'XMLHttpRequest';
+		}
 
 		if(method === "POST") {
 			headerValues["Content-Type"] = "application/x-www-form-urlencoded; charset=UTF-8";
@@ -92,7 +97,7 @@ define('ajax', [], function() {
 
 			if (requestObj) {
 				requestObj.open("GET", url, config.async);
-				setHeaders(requestObj, "GET", config.headers || {});
+				setHeaders(url, requestObj, "GET", config.headers || {});
 				requestObj.onreadystatechange = function () {
 					handleResponse(this, callbacks);
 				}
@@ -109,7 +114,7 @@ define('ajax', [], function() {
 
 			if (requestObj) {
 				requestObj.open("POST", url, config.async);
-				setHeaders(requestObj, "POST", config.headers || {});
+				setHeaders(url, requestObj, "POST", config.headers || {});
 				requestObj.onreadystatechange = function () {
 					handleResponse(this, callbacks);
 				}
