@@ -1,0 +1,115 @@
+<html>
+  <head>
+    <title>Tests Post ajax.js</title>
+    <meta charset="utf-8">
+    <link href="/css/mocha.css" type="text/css" rel="stylesheet"/>
+  </head>
+  <body>
+    <div id="mocha"></div>
+
+    <script src="/node_modules/mocha/mocha.js"></script>
+    <script src="/node_modules/proclaim/lib/proclaim.js"></script>
+    <script src="/test/helpers.js"></script>
+
+    <script src="/bower_components/async-define/async-define.js"></script>
+    <script src="/ajax.js"></script>
+    <script>
+      XMLHttpRequest.prototype.wrappedSetRequestHeader = XMLHttpRequest.prototype.setRequestHeader;
+      XMLHttpRequest.prototype.setRequestHeader = function(header, value) {
+        this.wrappedSetRequestHeader(header, value);
+
+        if(!this.headers) {
+          this.headers = {};
+        }
+
+        if(!this.headers[header]) {
+          this.headers[header] = [];
+        }
+
+        this.headers[header].push(value);
+      }
+
+      var assert = window.proclaim;
+
+      mocha.ui("bdd");
+
+      define(['ajax'], function(ajax) {
+        describe('Ajax Post Method', function(){
+          it("should call post and return success", function(done) {
+            ajax.post("/test/ajax.json", {}, {
+              success: function(response, xhr) {
+                assert.equal(response.name, "value");
+                assert.equal(xhr.status, "200");
+                done();
+              }
+            });
+          });
+
+          it("should call post and return complete on success", function(done) {
+            ajax.post("/test/ajax.json", {}, {
+              complete: function(xhr) {
+                done();
+              }
+            });
+          });
+
+          it("should call post and return error", function(done) {
+            ajax.post("/test/not-exist.json", {}, {
+              error: function(response, xhr) {
+                assert.equal(response, "Not Found");
+                assert.equal(xhr.status, "404");
+                done();
+              }
+            });
+          });
+
+          it("should call post and return complete on error", function(done) {
+            ajax.post("/test/not-exist.json", {}, {
+              complete: function(xhr) {
+                done();
+              }
+            });
+          });
+
+          it("should call post and set headers X-Requested-With, Accept and Content-Type", function(done) {
+            ajax.post("/test/ajax.json", {}, {
+              success: function(response, xhr) {
+                assert.equal(xhr.headers["X-Requested-With"][0], "XMLHttpRequest");
+                assert.equal(xhr.headers["Accept"][0], "*/*");
+                assert.equal(xhr.headers["Content-Type"][0], "application/x-www-form-urlencoded; charset=UTF-8");
+                done();
+              }
+            });
+          });
+
+          it("should call post and parse XML if response Content-Type is XML", function(done) {
+            ajax.post("/test/ajax.xml", {}, {
+              success: function(response, xhr) {
+                assert.ok("querySelector" in response);
+                assert.equal(response.querySelector("person > name").textContent, "Fernanda");
+                assert.equal(response.querySelector("person > age").textContent, "21");
+                done();
+              }
+            });
+          });
+
+          it("should call post and parse TXT if response Content-Type is text/plain", function(done) {
+            ajax.post("/test/ajax.txt", {}, {
+              success: function(response, xhr) {
+                assert.equal(response, "Texto\n");
+                done();
+              }
+            });
+          });
+        });
+      });
+    </script>
+    <script>
+      if (window.mochaPhantomJS) {
+        mochaPhantomJS.run();
+      } else {
+        mocha.run();
+      }
+    </script>
+  </body>
+</html>

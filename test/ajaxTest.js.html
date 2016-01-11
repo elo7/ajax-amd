@@ -1,61 +1,11 @@
 <html>
   <head>
-    <title>Tests app.js</title>
+    <title>Tests ajax.js</title>
     <meta charset="utf-8">
     <link href="/css/mocha.css" type="text/css" rel="stylesheet"/>
   </head>
   <body>
     <div id="mocha"></div>
-
-    <form id='form-test'>
-      <input value='value-text-1' name='input-text-1'>
-      <input value='value-text-2' name='input-text-2'>
-      <input value='' name='input-text-3'>
-      <input value='value-text-4' name='input-text-4' disabled>
-
-      <input type='checkbox' checked value='value-checkbox-1' name='input-checkbox-1-text'>
-      <input type='checkbox' value='value-checkbox-2' name='input-checkbox-2-text'>
-
-      <input type='radio' checked value='value-radio-1' name='input-radio-1-text'>
-      <input type='radio' value='value-radio-2' name='input-radio-2-text'>
-
-      <input type='hidden' value='value-hidden-1' name='input-hidden-1-text'>
-      <input type='hidden' value='value-hidden-2' name='input-hidden-2-text'>
-
-      <textarea name='textarea-1'>value-textarea-1</textarea>
-      <textarea name='textarea-2' disabled>value-textarea-2</textarea>
-
-      <select name='select-1'>
-        <option>1</option>
-        <option selected>2</option>
-        <option>3</option>
-      </select>
-
-      <select name='select-2'>
-        <option>1</option>
-        <option>2</option>
-        <option selected>3</option>
-      </select>
-
-      <select name='select-3'>
-        <option></option>
-        <option>1</option>
-        <option>2</option>
-        <option>3</option>
-      </select>
-
-      <select name='select-4' disabled>
-        <option selected>1</option>
-        <option>2</option>
-        <option>3</option>
-      </select>
-
-      <input type='file' name='input-file' value='file.jpg'>
-
-      <input type='button' name='input-button' value='value-button'>
-      <input type='submit' name='input-submit' value='value-submit'>
-      <input type='reset' name='input-reset' value='value-reset'>
-    </form>
 
     <script src="/node_modules/mocha/mocha.js"></script>
     <script src="/node_modules/proclaim/lib/proclaim.js"></script>
@@ -64,19 +14,12 @@
     <script src="/bower_components/async-define/async-define.js"></script>
     <script src="/ajax.js"></script>
     <script>
-      XMLHttpRequest.prototype.wrappedSetRequestHeader = XMLHttpRequest.prototype.setRequestHeader;
-      XMLHttpRequest.prototype.setRequestHeader = function(header, value) {
-        this.wrappedSetRequestHeader(header, value);
-
-        if(!this.headers) {
-          this.headers = {};
-        }
-
-        if(!this.headers[header]) {
-          this.headers[header] = [];
-        }
-
-        this.headers[header].push(value);
+      function knownMethods(){
+        return [
+          'get',
+          'post',
+          'serializeObject'
+        ];
       }
 
       var assert = window.proclaim;
@@ -90,147 +33,6 @@
             for(var methodName in ajax) current.push(methodName);
             assert.equal(arrayEquals(knownMethods(), current), true);
           });
-
-          it("should call ajax and return success", function(done) {
-            ajax.get("/test/ajax.json", {}, {
-              success: function(response, xhr) {
-                assert.equal(response.name, "value");
-                assert.equal(xhr.status, "200");
-                done();
-              }
-            });
-          });
-
-          it("should call ajax and return complete on success", function(done) {
-            ajax.get("/test/ajax.json", {}, {
-              complete: function(xhr) {
-                done();
-              }
-            });
-          });
-
-          it("should call ajax and return error", function(done) {
-            ajax.get("/test/not-exist.json", {}, {
-              error: function(response, xhr) {
-                assert.equal(response, "Not Found");
-                assert.equal(xhr.status, "404");
-                done();
-              }
-            });
-          });
-
-          it("should call ajax and return complete on error", function(done) {
-            ajax.get("/test/not-exist.json", {}, {
-              complete: function(xhr) {
-                done();
-              }
-            });
-          });
-
-          it("should call ajax and set headers X-Requested-With and Accept and not Content-Type", function(done) {
-            ajax.get("/test/ajax.json", {}, {
-              success: function(response, xhr) {
-                assert.equal(xhr.headers["X-Requested-With"][0], "XMLHttpRequest");
-                assert.equal(xhr.headers["Accept"][0], "*/*");
-                assert.isUndefined(xhr.headers["Content-Type"]);
-                done();
-              }
-            });
-          });
-
-          it("should call ajax and parse XML if response Content-Type is XML", function(done) {
-            ajax.get("/test/ajax.xml", {}, {
-              success: function(response, xhr) {
-                assert.ok("querySelector" in response);
-                assert.equal(response.querySelector("person > name").textContent, "Fernanda");
-                assert.equal(response.querySelector("person > age").textContent, "21");
-                done();
-              }
-            });
-          });
-
-          it("should call ajax and parse TXT if response Content-Type is text/plain", function(done) {
-            ajax.get("/test/ajax.txt", {}, {
-              success: function(response, xhr) {
-                assert.equal(response, "Texto\n");
-                done();
-              }
-            });
-          });
-
-          it("should call post and return success", function(done) {
-            ajax.post("/test/ajax.json", {}, {
-              success: function(response, xhr) {
-                assert.equal(response.name, "value");
-                assert.equal(xhr.status, "200");
-                done();
-              }
-            });
-          });
-
-          it("should call post and return complete on success", function(done) {
-            ajax.post("/test/ajax.json", {}, {
-              complete: function(xhr) {
-                done();
-              }
-            });
-          });
-
-          it("should call post and return error", function(done) {
-            ajax.post("/test/not-exist.json", {}, {
-              error: function(response, xhr) {
-                assert.equal(response, "Not Found");
-                assert.equal(xhr.status, "404");
-                done();
-              }
-            });
-          });
-
-          it("should call post and return complete on error", function(done) {
-            ajax.post("/test/not-exist.json", {}, {
-              complete: function(xhr) {
-                done();
-              }
-            });
-          });
-
-          it("should call post and set headers X-Requested-With, Accept and Content-Type", function(done) {
-            ajax.post("/test/ajax.json", {}, {
-              success: function(response, xhr) {
-                assert.equal(xhr.headers["X-Requested-With"][0], "XMLHttpRequest");
-                assert.equal(xhr.headers["Accept"][0], "*/*");
-                assert.equal(xhr.headers["Content-Type"][0], "application/x-www-form-urlencoded; charset=UTF-8");
-                done();
-              }
-            });
-          });
-
-          it("should call post and parse XML if response Content-Type is XML", function(done) {
-            ajax.post("/test/ajax.xml", {}, {
-              success: function(response, xhr) {
-                assert.ok("querySelector" in response);
-                assert.equal(response.querySelector("person > name").textContent, "Fernanda");
-                assert.equal(response.querySelector("person > age").textContent, "21");
-                done();
-              }
-            });
-          });
-
-          it("should call post and parse TXT if response Content-Type is text/plain", function(done) {
-            ajax.post("/test/ajax.txt", {}, {
-              success: function(response, xhr) {
-                assert.equal(response, "Texto\n");
-                done();
-              }
-            });
-          });
-
-          it("should serialize a form element and return a json", function() {
-            var serialize = ajax.serializeObject(document.getElementById('form-test'));
-            var expected = {"input-text-1":"value-text-1","input-text-2":"value-text-2","input-text-3":"","input-checkbox-1-text":"value-checkbox-1","input-radio-1-text":"value-radio-1","input-hidden-1-text":"value-hidden-1","input-hidden-2-text":"value-hidden-2","textarea-1":"value-textarea-1","select-1":"2","select-2":"3","select-3":"","input-file":"","input-button":"value-button","input-submit":"value-submit","input-reset":"value-reset"};
-
-            assert.deepEqual(expected, serialize);
-          });
         });
       });
     </script>
@@ -239,15 +41,6 @@
         mochaPhantomJS.run();
       } else {
         mocha.run();
-      }
-
-
-      function knownMethods(){
-        return [
-          'get',
-          'post',
-          'serializeObject'
-        ];
       }
     </script>
   </body>
