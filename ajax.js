@@ -43,8 +43,19 @@ define('ajax', [], function() {
 		if (requestObj.readyState !== 4) {
 			return;
 		}
+
+		var responseType = requestObj.getResponseHeader("Content-Type") || "";
+		var responseContent = "";
+		if(responseType.indexOf("json") !== -1) {
+			responseContent = JSON.parse(requestObj.responseText);
+		} else if(responseType.indexOf("xml") !== -1) {
+			responseContent = (new DOMParser()).parseFromString(requestObj.responseText,'text/xml');
+		} else {
+			responseContent = requestObj.responseText;
+		}
+
 		if(requestObj.status === 200 && callbacks.success && typeof callbacks.success === "function") {
-			callbacks.success(JSON.parse(requestObj.responseText), requestObj);
+			callbacks.success(responseContent, requestObj);
 		} else if (callbacks.error && typeof callbacks.error === "function") {
 			callbacks.error(requestObj.statusText, requestObj);
 		}

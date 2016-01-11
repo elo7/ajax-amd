@@ -138,6 +138,26 @@
             });
           });
 
+          it("should call ajax and parse XML if response Content-Type is XML", function(done) {
+            ajax.get("/test/ajax.xml", {}, {
+              success: function(response, xhr) {
+                assert.ok("querySelector" in response);
+                assert.equal(response.querySelector("person > name").textContent, "Fernanda");
+                assert.equal(response.querySelector("person > age").textContent, "21");
+                done();
+              }
+            });
+          });
+
+          it("should call ajax and parse TXT if response Content-Type is text/plain", function(done) {
+            ajax.get("/test/ajax.txt", {}, {
+              success: function(response, xhr) {
+                assert.equal(response, "Texto\n");
+                done();
+              }
+            });
+          });
+
           it("should call post and return success", function(done) {
             ajax.post("/test/ajax.json", {}, {
               success: function(response, xhr) {
@@ -180,6 +200,26 @@
                 assert.equal(xhr.headers["X-Requested-With"][0], "XMLHttpRequest");
                 assert.equal(xhr.headers["Accept"][0], "*/*");
                 assert.equal(xhr.headers["Content-Type"][0], "application/x-www-form-urlencoded; charset=UTF-8");
+                done();
+              }
+            });
+          });
+
+          it("should call post and parse XML if response Content-Type is XML", function(done) {
+            ajax.post("/test/ajax.xml", {}, {
+              success: function(response, xhr) {
+                assert.ok("querySelector" in response);
+                assert.equal(response.querySelector("person > name").textContent, "Fernanda");
+                assert.equal(response.querySelector("person > age").textContent, "21");
+                done();
+              }
+            });
+          });
+
+          it("should call post and parse TXT if response Content-Type is text/plain", function(done) {
+            ajax.post("/test/ajax.txt", {}, {
+              success: function(response, xhr) {
+                assert.equal(response, "Texto\n");
                 done();
               }
             });
