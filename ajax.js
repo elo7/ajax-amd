@@ -69,7 +69,7 @@ define('ajax', [], function() {
 
 		if (isSuccess(requestObj.status) && callbacks.success && typeof callbacks.success === "function") {
 			callbacks.success(responseContent, requestObj);
-		} else if (callbacks.error && typeof callbacks.error === "function") {
+		} else if (!isSuccess(requestObj.status) && callbacks.error && typeof callbacks.error === "function") {
 			callbacks.error(requestObj.statusText, requestObj);
 		}
 
@@ -131,7 +131,7 @@ define('ajax', [], function() {
 				serialize = {},
 				total = formElements.length;
 
-			for (i = 0; i < total; i++) {
+			for (var i = 0; i < total; i++) {
 				if (!formElements[i].disabled && !formElements[i].name.isEmpty()) {
 					if (formElements[i].type === 'radio' || formElements[i].type === 'checkbox') {
 						if (formElements[i].checked) {

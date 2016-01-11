@@ -120,6 +120,47 @@
               }
             });
           });
+
+          it("should call complete callback always after success callbacks", function(done) {
+            var calledSuccess = false;
+            ajax.get("/test/ajax.json", {}, {
+              success: function(response, xhr) {
+                calledSuccess = true;
+              },
+              error: function(response, xhr) {
+              },
+              complete: function() {
+                assert.ok(calledSuccess);
+                done();
+              }
+            });
+          });
+
+          it("should call complete callback always after error callbacks", function(done) {
+            var calledError = false;
+            ajax.get("/test/not-exist.json", {}, {
+              success: function(response, xhr) {
+              },
+              error: function(response, xhr) {
+                calledError = true;
+              },
+              complete: function() {
+                assert.ok(calledError);
+                done();
+              }
+            });
+          });
+
+          it("should not call error callback if request was successful", function(done) {
+            ajax.get("/test/ajax.json", {}, {
+              error: function(response, xhr) {
+                assert.fail('called error callback', 'should not call error callback');
+              },
+              complete: function() {
+                done();
+              }
+            });
+          });
         });
       });
     </script>
