@@ -1,4 +1,9 @@
 define('ajax', [], function() {
+	"use strict";
+
+	var GET = "GET";
+	var POST = "POST";
+
 	if (!String.prototype.trim) {
 		(function(){
 			// Make sure we trim BOM and NBSP
@@ -17,7 +22,7 @@ define('ajax', [], function() {
 				value = this.toString();
 			}
 
-			if(value===null || value===undefined || value.trim()==="") {
+			if(value === null || value === undefined || value.trim() === "") {
 				return true;
 			}
 
@@ -43,25 +48,27 @@ define('ajax', [], function() {
 	}
 
 	function handleResponse(requestObj, callbacks) {
+		var responseType = requestObj.getResponseHeader("Content-Type") || "";
+		var responseContent = "";
+
 		if (requestObj.readyState !== 4) {
 			return;
 		}
 
-		var responseType = requestObj.getResponseHeader("Content-Type") || "";
-		var responseContent = "";
-		if(responseType.indexOf("json") !== -1) {
+		if (responseType.indexOf("json") !== -1) {
 			responseContent = JSON.parse(requestObj.responseText);
-		} else if(responseType.indexOf("xml") !== -1) {
+		} else if (responseType.indexOf("xml") !== -1) {
 			responseContent = (new DOMParser()).parseFromString(requestObj.responseText,'text/xml');
 		} else {
 			responseContent = requestObj.responseText;
 		}
 
-		if(requestObj.status === 200 && callbacks.success && typeof callbacks.success === "function") {
+		if (requestObj.status === 200 && callbacks.success && typeof callbacks.success === "function") {
 			callbacks.success(responseContent, requestObj);
 		} else if (callbacks.error && typeof callbacks.error === "function") {
 			callbacks.error(requestObj.statusText, requestObj);
 		}
+
 		if (callbacks.complete && typeof callbacks.complete === "function") {
 			callbacks.complete(requestObj);
 		}
@@ -74,52 +81,42 @@ define('ajax', [], function() {
 
 		headerValues["Accept"] = configHeaders["Accept"] || "*/*";
 
-		if(!crossOrigin) {
+		if (!crossOrigin) {
 			headerValues['X-Requested-With'] = 'XMLHttpRequest';
 		}
 
-		if(method === "POST") {
+		if (method === POST) {
 			headerValues["Content-Type"] = "application/x-www-form-urlencoded; charset=UTF-8";
 		}
 
-		for(var header in headerValues) {
+		for (var header in headerValues) {
 			requestObj.setRequestHeader(header, headerValues[header]);
+		}
+	}
+
+	function makeRequest(method, url, data, callbacks, config) {
+		var callbacks = callbacks || {};
+		var config = config || {};
+		var requestObj = getRequestObj();
+		config.async = !!config.async;
+
+		if (requestObj) {
+			requestObj.open(method, url, config.async);
+			setHeaders(url, requestObj, method, config.headers || {});
+			requestObj.onreadystatechange = function () {
+				handleResponse(this, callbacks);
+			}
+			requestObj.send();
 		}
 	}
 
 	return {
 		'get': function(url, data, callbacks, config){
-			var callbacks = callbacks || {};
-			var config = config || {};
-			config.async = !!config.async;
-
-			var requestObj = getRequestObj();
-
-			if (requestObj) {
-				requestObj.open("GET", url, config.async);
-				setHeaders(url, requestObj, "GET", config.headers || {});
-				requestObj.onreadystatechange = function () {
-					handleResponse(this, callbacks);
-				}
-				requestObj.send();
-			}
+			makeRequest(GET, url, data, callbacks, config);
 		},
 
 		'post': function(url, data, callbacks, config){
-			var callbacks = callbacks || {};
-			var config = config || {};
-			config.async = !!config.async;
-
-			var requestObj = getRequestObj();
-
-			if (requestObj) {
-				requestObj.open("POST", url, config.async);
-				setHeaders(url, requestObj, "POST", config.headers || {});
-				requestObj.onreadystatechange = function () {
-					handleResponse(this, callbacks);
-				}
-				requestObj.send(urlEncode(data));
-			}
+			makeRequest(POST, url, data, callbacks, config);
 		},
 
 		'serializeObject': function(form){
@@ -130,10 +127,10 @@ define('ajax', [], function() {
 				serialize = {},
 				total = formElements.length;
 
-			for(i=0;i<total;i++){
-				if(!formElements[i].disabled && !formElements[i].name.isEmpty()){
-					if(formElements[i].type === 'radio' || formElements[i].type === 'checkbox'){
-						if(formElements[i].checked){
+			for (i = 0; i < total; i++) {
+				if (!formElements[i].disabled && !formElements[i].name.isEmpty()) {
+					if (formElements[i].type === 'radio' || formElements[i].type === 'checkbox') {
+						if (formElements[i].checked) {
 							serialize[formElements[i].getAttribute('name')] = formElements[i].value;
 						}
 					} else {
@@ -141,7 +138,6 @@ define('ajax', [], function() {
 					}
 				}
 			}
-
 			return serialize;
 		}
 	}

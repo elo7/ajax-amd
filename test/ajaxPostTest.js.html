@@ -18,11 +18,11 @@
       XMLHttpRequest.prototype.setRequestHeader = function(header, value) {
         this.wrappedSetRequestHeader(header, value);
 
-        if(!this.headers) {
+        if (!this.headers) {
           this.headers = {};
         }
 
-        if(!this.headers[header]) {
+        if (!this.headers[header]) {
           this.headers[header] = [];
         }
 
