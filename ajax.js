@@ -110,7 +110,11 @@ define('ajax', [], function() {
 			requestObj.onreadystatechange = function () {
 				handleResponse(this, callbacks);
 			}
-			requestObj.send();
+			if (method === GET) {
+				requestObj.send();
+			} else {
+				requestObj.send(urlEncode(data));
+			}
 		}
 	}
 
