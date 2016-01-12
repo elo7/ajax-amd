@@ -1,4 +1,4 @@
-define('ajax', [], function() {
+define("ajax", [], function() {
 	"use strict";
 
 	var GET = "GET";
@@ -34,9 +34,9 @@ define('ajax', [], function() {
 		if (data) {
 			var encodedParams = [];
 			for (var k in data) {
-				encodedParams.push(encodeURIComponent(k) + '=' + encodeURIComponent(data[k]));
+				encodedParams.push(encodeURIComponent(k) + "=" + encodeURIComponent(data[k]));
 			}
-			return encodedParams.join('&');
+			return encodedParams.join("&");
 		}
 		return null;
 	}
@@ -64,7 +64,7 @@ define('ajax', [], function() {
 		if (responseType.indexOf("json") !== -1) {
 			responseContent = JSON.parse(requestObj.responseText);
 		} else if (responseType.indexOf("xml") !== -1) {
-			responseContent = (new DOMParser()).parseFromString(requestObj.responseText,'text/xml');
+			responseContent = (new DOMParser()).parseFromString(requestObj.responseText,"text/xml");
 		} else {
 			responseContent = requestObj.responseText;
 		}
@@ -88,7 +88,7 @@ define('ajax', [], function() {
 		headerValues["Accept"] = configHeaders["Accept"] || "*/*";
 
 		if (!crossOrigin) {
-			headerValues['X-Requested-With'] = 'XMLHttpRequest';
+			headerValues["X-Requested-With"] = "XMLHttpRequest";
 		}
 
 		if (method === POST) {
@@ -121,15 +121,15 @@ define('ajax', [], function() {
 	}
 
 	return {
-		'get': function(url, data, callbacks, config){
+		"get": function(url, data, callbacks, config){
 			makeRequest(GET, url, data, callbacks, config);
 		},
 
-		'post': function(url, data, callbacks, config){
+		"post": function(url, data, callbacks, config){
 			makeRequest(POST, url, data, callbacks, config);
 		},
 
-		'serializeObject': function(form){
+		"serializeObject": function(form){
 			var inputs = Array.prototype.slice.call(form.getElementsByTagName("input")),
 				textareas = Array.prototype.slice.call(form.getElementsByTagName("textarea")),
 				selects = Array.prototype.slice.call(form.getElementsByTagName("select")),
@@ -139,12 +139,12 @@ define('ajax', [], function() {
 
 			for (var i = 0; i < total; i++) {
 				if (!formElements[i].disabled && !formElements[i].name.isEmpty()) {
-					if (formElements[i].type === 'radio' || formElements[i].type === 'checkbox') {
+					if (formElements[i].type === "radio" || formElements[i].type === "checkbox") {
 						if (formElements[i].checked) {
-							serialize[formElements[i].getAttribute('name')] = formElements[i].value;
+							serialize[formElements[i].getAttribute("name")] = formElements[i].value;
 						}
 					} else {
-						serialize[formElements[i].getAttribute('name')] = formElements[i].value;
+						serialize[formElements[i].getAttribute("name")] = formElements[i].value;
 					}
 				}
 			}
