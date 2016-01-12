@@ -53,6 +53,10 @@ define("ajax", [], function() {
 		return status >= 200 && status < 300;
 	}
 
+	function isFunction(fn) {
+		return fn && typeof fn === "function";
+	}
+
 	function handleResponse(requestObj, callbacks) {
 		if (requestObj.readyState !== 4) {
 			return;
@@ -69,13 +73,13 @@ define("ajax", [], function() {
 			responseContent = requestObj.responseText;
 		}
 
-		if (isSuccess(requestObj.status) && callbacks.success && typeof callbacks.success === "function") {
+		if (isSuccess(requestObj.status) && isFunction(callbacks.success)) {
 			callbacks.success(responseContent, requestObj);
-		} else if (!isSuccess(requestObj.status) && callbacks.error && typeof callbacks.error === "function") {
+		} else if (!isSuccess(requestObj.status) && isFunction(callbacks.error)) {
 			callbacks.error(requestObj.statusText, requestObj);
 		}
 
-		if (callbacks.complete && typeof callbacks.complete === "function") {
+		if (isFunction(callbacks.complete)) {
 			callbacks.complete(requestObj);
 		}
 	}
