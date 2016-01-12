@@ -32,9 +32,11 @@ define('ajax', [], function() {
 
 	function urlEncode(data) {
 		if (data) {
-			return Object.keys(data).map(function(k) {
-				return encodeURIComponent(k) + '=' + encodeURIComponent(data[k])
-			}).join('&');
+			var encodedParams = [];
+			for (var k in data) {
+				encodedParams.push(encodeURIComponent(k) + '=' + encodeURIComponent(data[k]));
+			}
+			return encodedParams.join('&');
 		}
 		return null;
 	}
@@ -52,12 +54,12 @@ define('ajax', [], function() {
 	}
 
 	function handleResponse(requestObj, callbacks) {
-		var responseType = requestObj.getResponseHeader("Content-Type") || "";
-		var responseContent = "";
-
 		if (requestObj.readyState !== 4) {
 			return;
 		}
+
+		var responseType = requestObj.getResponseHeader("Content-Type") || "";
+		var responseContent = "";
 
 		if (responseType.indexOf("json") !== -1) {
 			responseContent = JSON.parse(requestObj.responseText);
