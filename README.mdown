@@ -13,7 +13,7 @@ Install with [Bower](http://bower.io): `bower install ajax-amd`
 ## Dependency
 
 Ajax-amd depends on an [amd](http://en.wikipedia.org/wiki/Asynchronous_module_definition) implementation. We suggest [async-define](https://gist.github.com/sergiolopes/5778124) implementation for dependency lookup.
-Ajax-amd also depends on [qwest](https://github.com/pyrsmk/qwest) and a stable version is already defined in bower configuration. You only need to install with [Bower](http://bower.io) and loads ajax-amd and qwest files on your page.
+You only need to install with [Bower](http://bower.io) and loads ajax-amd file on your page.
 
 ## Methods
 
