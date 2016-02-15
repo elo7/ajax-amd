@@ -180,6 +180,47 @@
               }
             });
           });
+
+          it("should call error callback if request timed out and should not retry", function(done) {
+            this.timeout(3000);
+            ajax.post("/test/slow.json?count=3&test=4", {}, {
+              error: function(response, xhr) {
+                done();
+              }
+            }, {
+              async: true,
+              timeout: 900
+            });
+          });
+
+          it("should call success callback if first request was unsuccessful but retried and did ok", function(done) {
+            this.timeout(3000);
+            ajax.post("/test/slow.json?count=3&test=5", {}, {
+              success: function() {
+                done();
+              },
+              error: function(response, xhr) {
+                assert.fail('called error callback', 'should not call error callback');
+              }
+            }, {
+              async: true,
+              retries: 2,
+              timeout: 900
+            });
+          });
+
+          it("should call error callback if retried and failed", function(done) {
+            this.timeout(5000);
+            ajax.post("/test/slow.json?count=4&test=6", {}, {
+              error: function(response, xhr) {
+                done();
+              }
+            }, {
+              async: true,
+              retries: 2,
+              timeout: 900
+            });
+          });
         });
       });
     </script>

@@ -20,6 +20,7 @@
 		"mocha-phantomjs": "3.5.1",
 		"proclaim": "2.0.0",
 		"bower": "1.4.1",
-		"node-static": "0.7.7"
+		"node-static": "0.7.7",
+		"sleep": "3.0.1"
 	}
 }
