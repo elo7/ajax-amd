@@ -85,22 +85,21 @@ define("ajax", [], function() {
 	}
 
 	function setHeaders(url, requestObj, method, configHeaders) {
-		var headerValues = {};
 		var host = url.match(/\/\/(.+?)\//);
 		var crossOrigin = host && (host[1] ? host[1] != window.location.host : false);
 
-		headerValues["Accept"] = configHeaders["Accept"] || "*/*";
+		configHeaders["Accept"] = configHeaders["Accept"] || "*/*";
 
 		if (!crossOrigin) {
-			headerValues["X-Requested-With"] = "XMLHttpRequest";
+			configHeaders["X-Requested-With"] = configHeaders["X-Requested-With"] || "XMLHttpRequest";
 		}
 
 		if (method === POST) {
-			headerValues["Content-Type"] = "application/x-www-form-urlencoded; charset=UTF-8";
+			configHeaders["Content-Type"] = configHeaders["Content-Type"] || "application/x-www-form-urlencoded; charset=UTF-8";
 		}
 
-		for (var header in headerValues) {
-			requestObj.setRequestHeader(header, headerValues[header]);
+		for (var header in configHeaders) {
+			requestObj.setRequestHeader(header, configHeaders[header]);
 		}
 	}
 

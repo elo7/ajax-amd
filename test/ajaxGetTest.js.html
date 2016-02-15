@@ -82,6 +82,23 @@
             });
           });
 
+          it("should call ajax and keep headers given by the user", function(done) {
+            ajax.get("/test/ajax.json", {}, {
+              success: function(response, xhr) {
+                assert.equal(xhr.headers["X-Requested-With"][0], "curl");
+                assert.equal(xhr.headers["Accept"][0], "application/json");
+                assert.equal(xhr.headers["Content-Language"][0], "zh-TW");
+                done();
+              }
+            }, {
+              headers: {
+                "X-Requested-With": "curl",
+                "Accept": "application/json",
+                "Content-Language": "zh-TW"
+              }
+            });
+          });
+
           it("should call ajax and parse XML if response Content-Type is XML", function(done) {
             ajax.get("/test/ajax.xml", {}, {
               success: function(response, xhr) {
