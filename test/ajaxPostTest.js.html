@@ -121,6 +121,17 @@
             });
           });
 
+          it("should call error callback if error occurs on parse", function(done) {
+            ajax.post("/test/ajaxWrong.json", {}, {
+              success: function(response, xhr) {
+                assert.fail('called success callback', 'should not call success callback');
+              },
+              error: function(response, xhr) {
+                done();
+              }
+            });
+          });
+
           it("should call post and return success with CORS", function(done) {
             ajax.post("http://127.0.0.1:8888/test/ajax.json", {}, {
               success: function(response, xhr) {
@@ -184,6 +195,9 @@
           it("should call error callback if request timed out and should not retry", function(done) {
             this.timeout(3000);
             ajax.post("/test/slow.json?count=3&test=4", {}, {
+              success: function(response, xhr) {
+                assert.fail('called success callback', 'should not call success callback');
+              },
               error: function(response, xhr) {
                 done();
               }

@@ -68,18 +68,23 @@ define("ajax", [], function() {
 
 		var responseType = requestObj.getResponseHeader("Content-Type") || "";
 		var responseContent = "";
+		var parseError = false;
 
-		if (responseType.indexOf("json") !== -1) {
-			responseContent = JSON.parse(requestObj.responseText);
-		} else if (responseType.indexOf("xml") !== -1) {
-			responseContent = (new DOMParser()).parseFromString(requestObj.responseText,"text/xml");
-		} else {
-			responseContent = requestObj.responseText;
+		try {
+			if (responseType.indexOf("json") !== -1) {
+				responseContent = JSON.parse(requestObj.responseText);
+			} else if (responseType.indexOf("xml") !== -1) {
+				responseContent = (new DOMParser()).parseFromString(requestObj.responseText,"text/xml");
+			} else {
+				responseContent = requestObj.responseText;
+			}
+		} catch (err) {
+			parseError = true;
 		}
 
-		if (isSuccess(requestObj.status) && isFunction(callbacks.success)) {
+		if (!parseError && isSuccess(requestObj.status) && isFunction(callbacks.success)) {
 			callbacks.success(responseContent, requestObj);
-		} else if (!isSuccess(requestObj.status) && isFunction(callbacks.error)) {
+		} else if ((parseError || !isSuccess(requestObj.status)) && isFunction(callbacks.error)) {
 			if (lastChance) {
 				callbacks.error(requestObj.statusText, requestObj);
 			}

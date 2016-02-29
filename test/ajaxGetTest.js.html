@@ -119,6 +119,25 @@
             });
           });
 
+          it("should call error callback if error occurs on parse", function(done) {
+            ajax.get("/test/ajaxWrong.json", {}, {
+              success: function(response, xhr) {
+                assert.fail('called success callback', 'should not call success callback');
+              },
+              error: function(response, xhr) {
+                done();
+              }
+            });
+          });
+
+          it("should call complete callback if error occurs on parse", function(done) {
+            ajax.get("/test/ajaxWrong.json", {}, {
+              complete: function(response, xhr) {
+                done();
+              }
+            });
+          });
+
           it("should call ajax and return success with CORS", function(done) {
             ajax.get("http://127.0.0.1:8888/test/ajax.json", {}, {
               success: function(response, xhr) {
@@ -182,6 +201,9 @@
           it("should call error callback if request timed out and should not retry", function(done) {
             this.timeout(3000);
             ajax.get("/test/slow.json?count=3&test=1", {}, {
+              success: function(response, xhr) {
+                assert.fail('called success callback', 'should not call success callback');
+              },
               error: function(response, xhr) {
                 done();
               }
