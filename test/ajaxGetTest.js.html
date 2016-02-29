@@ -241,6 +241,33 @@
               timeout: 900
             });
           });
+
+          it("should call ajax sync", function() {
+            this.timeout(5000);
+            var calledSuccess = false;
+            ajax.get("/test/slow.json?count=2&test=4", {}, {
+              success: function(response, xhr) {
+                calledSuccess = true;
+              }
+            }, {
+              async: false
+            });
+            assert.ok(calledSuccess);
+          });
+
+          it("should call ajax async", function(done) {
+            this.timeout(5000);
+            var calledSuccess = false;
+            ajax.get("/test/slow.json?count=2&test=5", {}, {
+              success: function(response, xhr) {
+                calledSuccess = true;
+                done();
+              }
+            }, {
+              async: true
+            });
+            assert.notOk(calledSuccess);
+          });
         });
       });
     </script>
