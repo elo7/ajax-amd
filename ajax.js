@@ -62,7 +62,7 @@ define("ajax", [], function() {
 			return;
 		}
 
-		if (timeoutHandler !== undefined) {
+		if (lastChance && timeoutHandler !== undefined) {
 			clearTimeout(timeoutHandler);
 		}
 
@@ -90,8 +90,9 @@ define("ajax", [], function() {
 			}
 		}
 
-		if (isFunction(callbacks.complete)) {
+		if ((!parseError || lastChance) && isFunction(callbacks.complete)) {
 			callbacks.complete(requestObj);
+			clearTimeout(timeoutHandler);
 		}
 	}
 
@@ -115,10 +116,10 @@ define("ajax", [], function() {
 	}
 
 	function makeRequest(method, url, data, callbacks, config) {
-		var callbacks = callbacks || {};
-		var config = config || {};
-		var retries = config.retries ? parseInt(config.retries) : 0;
-		var timeout = config.timeout ? parseInt(config.timeout) : 10000;
+		callbacks = callbacks || {};
+		config = config || {};
+		config.retries = config.retries ? parseInt(config.retries) : 0;
+		config.timeout = config.timeout ? parseInt(config.timeout) : 10000;
 		var requestObj = getRequestObj();
 		var timeoutHandler;
 		config.async = !!config.async;
@@ -127,18 +128,18 @@ define("ajax", [], function() {
 			requestObj.open(method, url, config.async);
 			setHeaders(url, requestObj, method, config.headers || {});
 
-			if (timeout) {
+			if (config.timeout) {
 				timeoutHandler = setTimeout(function() {
 					requestObj.abort();
-					if (retries > 0) {
+					if (config.retries > 0) {
 						config.retries--;
 						makeRequest(method, url, data, callbacks, config);
 					}
-				}, timeout);
+				}, config.timeout);
 			}
 
 			requestObj.onreadystatechange = function() {
-				handleResponse(this, callbacks, timeoutHandler, retries === 0);
+				handleResponse(this, callbacks, timeoutHandler, config.retries === 0);
 			};
 			if (method === GET) {
 				requestObj.send();
