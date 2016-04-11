@@ -118,7 +118,7 @@ define("ajax", [], function() {
 		var callbacks = callbacks || {};
 		var config = config || {};
 		var retries = config.retries ? parseInt(config.retries) : 0;
-		var timeout = config.timeout ? parseInt(config.timeout) : 0;
+		var timeout = config.timeout ? parseInt(config.timeout) : 10000;
 		var requestObj = getRequestObj();
 		var timeoutHandler;
 		config.async = !!config.async;
