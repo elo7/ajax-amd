@@ -115,14 +115,23 @@ define("ajax", [], function() {
 		}
 	}
 
+	function setCache(url, hasCache) {
+		if (hasCache || (/(\?|&)_t=/).test(url)) {
+			return url;
+		}
+		return url + ((/\?/).test(url) ? "&_t=" : "?_t=") + (+ new Date());
+	}
+
 	function makeRequest(method, url, data, callbacks, config) {
 		callbacks = callbacks || {};
 		config = config || {};
 		config.retries = config.retries ? parseInt(config.retries) : 0;
 		config.timeout = config.timeout ? parseInt(config.timeout) : 10000;
+		config.cache = !!config.cache;
 		var requestObj = getRequestObj();
 		var timeoutHandler;
 		config.async = !!config.async;
+		url = setCache(url, config.cache);
 
 		if (requestObj) {
 			requestObj.open(method, url, config.async);
@@ -142,7 +151,7 @@ define("ajax", [], function() {
 				handleResponse(this, callbacks, timeoutHandler, config.retries === 0);
 			};
 			if (method === GET) {
-				requestObj.send();
+				requestObj.send(data);
 			} else {
 				requestObj.send(urlEncode(data));
 			}
