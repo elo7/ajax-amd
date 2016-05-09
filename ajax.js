@@ -41,8 +41,10 @@ define("ajax", [], function() {
 		return null;
 	}
 
-	function getRequestObj() {
-		if (window.XMLHttpRequest) {
+	function getRequestObj(url) {
+		if (window.XDomainRequest && isCORS(url)) {
+			return new XDomainRequest();
+		} else if (window.XMLHttpRequest) {
 			return new XMLHttpRequest();
 		} else if (window.ActiveXObject) {
 			return new ActiveXObject("Microsoft.XMLHTTP");
@@ -97,12 +99,9 @@ define("ajax", [], function() {
 	}
 
 	function setHeaders(url, requestObj, method, configHeaders) {
-		var host = url.match(/\/\/(.+?)\//);
-		var crossOrigin = host && (host[1] ? host[1] != window.location.host : false);
-
 		configHeaders["Accept"] = configHeaders["Accept"] || "*/*";
 
-		if (!crossOrigin) {
+		if (!isCORS(url)) {
 			configHeaders["X-Requested-With"] = configHeaders["X-Requested-With"] || "XMLHttpRequest";
 		}
 
@@ -113,6 +112,11 @@ define("ajax", [], function() {
 		for (var header in configHeaders) {
 			requestObj.setRequestHeader(header, configHeaders[header]);
 		}
+	}
+
+	function isCORS(url) {
+		var host = url.match(/\/\/(.+?)\//);
+		return host && (host[1] ? host[1] != window.location.host : false);
 	}
 
 	function setCache(url, hasCache) {
@@ -128,7 +132,7 @@ define("ajax", [], function() {
 		config.retries = config.retries ? parseInt(config.retries) : 0;
 		config.timeout = config.timeout ? parseInt(config.timeout) : 10000;
 		config.cache = !!config.cache;
-		var requestObj = getRequestObj();
+		var requestObj = getRequestObj(url);
 		var timeoutHandler;
 		config.async = !!config.async;
 		url = setCache(url, config.cache);
