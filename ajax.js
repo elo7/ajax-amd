@@ -135,6 +135,11 @@ define("ajax", [], function() {
 		var requestObj = getRequestObj(url);
 		var timeoutHandler;
 		config.async = !!config.async;
+
+		if (method === GET) {
+			url += ((/(\?)/).test(url) ? "&" : "?") + urlEncode(data);
+		}
+
 		url = setCache(url, config.cache);
 
 		if (requestObj) {
@@ -155,7 +160,7 @@ define("ajax", [], function() {
 				handleResponse(this, callbacks, timeoutHandler, config.retries === 0);
 			};
 			if (method === GET) {
-				requestObj.send(data);
+				requestObj.send();
 			} else {
 				requestObj.send(urlEncode(data));
 			}
