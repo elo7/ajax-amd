@@ -30,8 +30,15 @@ define("ajax", [], function() {
 		};
 	}
 
-	function urlEncode(data) {
-		if (data) {
+	function isEmptyData(data) {
+		for(var prop in data) {
+			if(data.hasOwnProperty(prop)) return false;
+		}
+		return true;
+	}
+
+	function urlEncodeParams(data) {
+		if (!isEmptyData(data)) {
 			var encodedParams = [];
 			for (var k in data) {
 				encodedParams.push(encodeURIComponent(k) + "=" + encodeURIComponent(data[k]));
@@ -39,6 +46,15 @@ define("ajax", [], function() {
 			return encodedParams.join("&");
 		}
 		return null;
+	}
+
+	function urlEncode(url, data) {
+		var encodedParams = urlEncodeParams(data);
+		if( (encodedParams == null || url.contains(encodedParams)) || (/(\&$)/).test(url) ) {
+			return url;
+		}
+		url += ((/(\?)/).test(url) ? "&" : "?")  + encodedParams;
+		return url;
 	}
 
 	function getRequestObj(url) {
@@ -123,7 +139,12 @@ define("ajax", [], function() {
 		if (hasCache || (/(\?|&)_t=/).test(url)) {
 			return url;
 		}
-		return url + ((/\?/).test(url) ? "&_t=" : "?_t=") + (+ new Date());
+
+		if ((/\?/).test(url)) {
+			return url + (!(/(\&$)/).test(url) ? "&_t=" : "_t=") + (+ new Date());
+		}
+
+		return url + "?_t=" + (+ new Date());
 	}
 
 	function makeRequest(method, url, data, callbacks, config) {
@@ -137,7 +158,7 @@ define("ajax", [], function() {
 		config.async = !!config.async;
 
 		if (method === GET) {
-			url += ((/(\?)/).test(url) ? "&" : "?") + urlEncode(data);
+			url = urlEncode(url, data);
 		}
 
 		url = setCache(url, config.cache);
@@ -162,7 +183,7 @@ define("ajax", [], function() {
 			if (method === GET) {
 				requestObj.send();
 			} else {
-				requestObj.send(urlEncode(data));
+				requestObj.send(urlEncodeParams(data));
 			}
 		}
 	}
