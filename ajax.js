@@ -37,11 +37,17 @@ define("ajax", [], function() {
 		return true;
 	}
 
-	function urlEncodeParams(data) {
+	function urlEncodeParams(data, prefix) {
+		prefix = prefix || "";
 		if (!isEmptyData(data)) {
 			var encodedParams = [];
 			for (var k in data) {
-				encodedParams.push(encodeURIComponent(k) + "=" + encodeURIComponent(data[k]));
+				if (typeof data[k] === "object") {
+					var encodedObject = urlEncodeParams(data[k], prefix + encodeURIComponent(k) + ".");
+					encodedParams = encodedParams.concat(encodedObject.split("&"));
+				} else {
+					encodedParams.push(prefix + encodeURIComponent(k) + "=" + encodeURIComponent(data[k]));
+				}
 			}
 			return encodedParams.join("&");
 		}
@@ -50,7 +56,7 @@ define("ajax", [], function() {
 
 	function urlEncode(url, data) {
 		var encodedParams = urlEncodeParams(data);
-		if( (encodedParams == null || url.contains(encodedParams)) || (/(\&$)/).test(url) ) {
+		if( (encodedParams == null || url.indexOf(encodedParams)) >= 0 || (/(\&$)/).test(url) ) {
 			return url;
 		}
 		url += ((/(\?)/).test(url) ? "&" : "?")  + encodedParams;

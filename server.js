@@ -17,7 +17,12 @@ http.createServer(function (req, res) {
 		if (e && req.url.indexOf('slow') !== -1) {
 			// slooooow mooootioon
 			if (countdownPerURI[req.url] === undefined) {
-				var urlCount = req.url.match(/count=(\d+)/)[1];
+				var urlCount;
+				if (req.url.match(/count\.type/)) {
+					urlCount = req.url.match(/count\.number=(\d+)/)[1];
+				} else {
+					urlCount = req.url.match(/count=(\d+)/)[1];
+				}
 				countdownPerURI[req.url] = parseInt(urlCount, 10);
 			}
 			if (countdownPerURI[req.url] > 0) {

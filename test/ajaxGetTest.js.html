@@ -268,6 +268,44 @@
             });
             assert.notOk(calledSuccess);
           });
+
+          it("should call ajax with data", function(done) {
+            this.timeout(5000);
+            var calledSuccess = false;
+            ajax.get("/test/slow.json", {
+              count: 2,
+              test: 5
+            }, {
+              success: function(response, xhr) {
+                calledSuccess = true;
+                done();
+              }
+            }, {
+              async: true
+            });
+            assert.notOk(calledSuccess);
+          });
+
+          it("should call ajax with data object", function(done) {
+            this.timeout(5000);
+            var calledSuccess = false;
+            ajax.get("/test/slow.json", {
+              count: {
+                type: "object",
+                number: 2
+              },
+              test: 5
+            }, {
+              success: function(response, xhr) {
+                calledSuccess = true;
+                done();
+              }
+            }, {
+              async: true
+            });
+            assert.notOk(calledSuccess);
+          });
+
         });
       });
     </script>
