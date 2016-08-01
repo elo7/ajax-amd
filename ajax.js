@@ -64,13 +64,7 @@ define("ajax", [], function() {
 	}
 
 	function getRequestObj(url) {
-		if (window.XDomainRequest && isCORS(url)) {
-			return new XDomainRequest();
-		} else if (window.XMLHttpRequest) {
-			return new XMLHttpRequest();
-		} else if (window.ActiveXObject) {
-			return new ActiveXObject("Microsoft.XMLHTTP");
-		}
+		return new XMLHttpRequest();
 	}
 
 	function isSuccess(status) {
