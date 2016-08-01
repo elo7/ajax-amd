@@ -102,6 +102,10 @@ define("ajax", [], function() {
 
 		if (!parseError && isSuccess(requestObj.status) && isFunction(callbacks.success)) {
 			callbacks.success(responseContent, requestObj);
+			if (timeoutHandler) {
+				clearTimeout(timeoutHandler);
+				timeoutHandler = null;
+			}
 		} else if ((parseError || !isSuccess(requestObj.status)) && isFunction(callbacks.error)) {
 			if (lastChance) {
 				callbacks.error(requestObj.statusText, requestObj);
@@ -110,7 +114,9 @@ define("ajax", [], function() {
 
 		if ((!parseError || lastChance) && isFunction(callbacks.complete)) {
 			callbacks.complete(requestObj);
-			clearTimeout(timeoutHandler);
+			if (timeoutHandler) {
+				clearTimeout(timeoutHandler);
+			}
 		}
 	}
 

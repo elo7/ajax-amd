@@ -198,6 +198,27 @@
             });
           });
 
+          it("should not retry if request was successful", function(done) {
+            this.timeout(1500);
+            var count = 0, testIsOkTimeout;
+            ajax.get("/test/ajax.json", {}, {
+              success: function(response, xhr) {
+                count++;
+                if (count === 1) {
+                  testIsOkTimeout = setTimeout(done, 1400);
+                }
+                if (count === 2) {
+                  clearTimeout(testIsOkTimeout);
+                  assert.fail('called sucess twice', 'should call success only once');
+                }
+              }
+            }, {
+              async: true,
+              timeout: 900,
+              retries: 1
+            });
+          });
+
           it("should call error callback if request timed out and should not retry", function(done) {
             this.timeout(3000);
             ajax.get("/test/slow.json?count=3&test=1", {}, {
