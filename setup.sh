@@ -1,4 +1,4 @@
 #!/bin/bash
 
-./node_modules/http-server/bin/http-server -p 8888 &
+node server.js &
 sleep 3
