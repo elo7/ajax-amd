@@ -1,6 +1,6 @@
 {
 	"name": "ajax-amd",
-	"version": "1.1.0",
+	"version": "1.1.1-SNAPSHOT",
 	"homepage": "https://github.com/elo7/ajax-amd",
 	"description": "A small ajax library",
 	"main": "ajax.js",
