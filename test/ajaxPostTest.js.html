@@ -82,6 +82,19 @@
             });
           });
 
+          it("should call post with json data", function(done) {
+            ajax.post("/test/ajax.json", { "test": true }, {
+              success: function(response, xhr) {
+                assert.equal(xhr.headers["Content-Type"][0], "application/json");
+                done();
+              }
+            }, {
+              headers: {
+                "Content-Type": "application/json"
+              }
+            });
+          });
+
           it("should call post and keep headers given by the user", function(done) {
             ajax.post("/test/ajax.json", {}, {
               success: function(response, xhr) {
