@@ -14,7 +14,19 @@ var countdownPerURI = {};
 
 http.createServer(function (req, res) {
 	file.serve(req, res, function(e) {
-		if (e && req.url.indexOf('slow') !== -1) {
+		if(req.url.indexOf('jsonData') !== -1) {
+			var body = '';
+			req.on('data', function (data) {
+				body += data;
+				if (body.length > 1e6) {
+					req.connection.destroy();
+				}
+			});
+			req.on('end', function () {
+				res.writeHead(200, {'Content-Type': 'application/json'});
+				res.end(body);
+			});
+		} else if (e && req.url.indexOf('slow') !== -1) {
 			// slooooow mooootioon
 			if (countdownPerURI[req.url] === undefined) {
 				var urlCount;
