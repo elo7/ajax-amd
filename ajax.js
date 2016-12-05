@@ -121,7 +121,7 @@ define("ajax", [], function() {
 	}
 
 	function setHeaders(url, requestObj, method, configHeaders) {
-		configHeaders["Accept"] = configHeaders["Accept"] || "*/*";
+		configHeaders["Accept"] = configHeaders["Accept"] || "application/json";
 
 		if (!isCORS(url)) {
 			configHeaders["X-Requested-With"] = configHeaders["X-Requested-With"] || "XMLHttpRequest";
