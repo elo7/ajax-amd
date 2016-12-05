@@ -82,6 +82,29 @@
             });
           });
 
+          it("should call post with json data", function(done) {
+            var data = { "test": true };
+            ajax.post("/jsonData", data, {
+              success: function(response, xhr) {
+                assert.equal(JSON.stringify(response), JSON.stringify(data));
+                done();
+              }
+            }, {
+              headers: {
+                "Content-Type": "application/json"
+              }
+            });
+          });
+
+          it("should call error callback with json data without json header", function(done) {
+            var data = { "test": true };
+            ajax.post("/jsonData", data, {
+              error: function() {
+                done();
+              }
+            });
+          });
+
           it("should call post and keep headers given by the user", function(done) {
             ajax.post("/test/ajax.json", {}, {
               success: function(response, xhr) {

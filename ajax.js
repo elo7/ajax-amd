@@ -189,7 +189,11 @@ define("ajax", [], function() {
 			if (method === GET) {
 				requestObj.send();
 			} else {
-				requestObj.send(urlEncodeParams(data));
+				if (config.headers != undefined && config.headers["Content-Type"] === "application/json") {
+					requestObj.send(JSON.stringify(data));
+				} else {
+					requestObj.send(urlEncodeParams(data));
+				}
 			}
 		}
 	}
