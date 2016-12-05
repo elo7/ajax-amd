@@ -75,6 +75,18 @@ define(['ajax'], function(ajax) {
 });
 ```
 
+#### put
+`.put(url, data [,callbacks] [,config])`
+
+###### Description:
+Exeutes an ajax request using `put` http method.
+
+#### delete
+`.delete(url, data [,callbacks] [,config])`
+
+###### Description:
+Exeutes an ajax request using `delete` http method.
+
 #### serializeObject
 `.serializeObject(form)`
 
