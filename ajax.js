@@ -170,6 +170,9 @@ define("ajax", [], function() {
 		url = setCache(url, config.cache);
 
 		if (requestObj) {
+			if (isFunction(callbacks.progress)) {
+				requestObj.addEventListener("progress", callbacks.progress, false);
+			}
 			requestObj.open(method, url, config.async);
 			setHeaders(url, requestObj, method, config.headers || {});
 

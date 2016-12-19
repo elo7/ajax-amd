@@ -306,6 +306,16 @@
             });
             assert.notOk(calledSuccess);
           });
+
+          it("should call progress callback", function(done) {
+            ajax.post("/test/ajax.json", {}, {
+              progress: function(xhr) {
+                done();
+              }
+            }, {
+              async: true
+            });
+          });
         });
       });
     </script>
