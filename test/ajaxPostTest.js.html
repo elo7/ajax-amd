@@ -34,9 +34,19 @@
       mocha.ui("bdd");
 
       define(['ajax'], function(ajax) {
+
+        var randomPostBasedHttpMethod = function() {
+          var methods = [
+            'post',
+            'put',
+            'delete'
+          ];
+          return methods[Math.floor(Math.random() * methods.length)];
+        };
+
         describe('Ajax Post Method', function(){
           it("should call post and return success", function(done) {
-            ajax.post("/test/ajax.json", {}, {
+            ajax[randomPostBasedHttpMethod()]("/test/ajax.json", {}, {
               success: function(response, xhr) {
                 assert.equal(response.name, "value");
                 assert.equal(xhr.status, "200");
@@ -46,7 +56,7 @@
           });
 
           it("should call post and return complete on success", function(done) {
-            ajax.post("/test/ajax.json", {}, {
+            ajax[randomPostBasedHttpMethod()]("/test/ajax.json", {}, {
               complete: function(xhr) {
                 done();
               }
@@ -54,7 +64,7 @@
           });
 
           it("should call post and return error", function(done) {
-            ajax.post("/test/not-exist.json", {}, {
+            ajax[randomPostBasedHttpMethod()]("/test/not-exist.json", {}, {
               error: function(response, xhr) {
                 assert.equal(response, "Not Found");
                 assert.equal(xhr.status, "404");
@@ -64,7 +74,7 @@
           });
 
           it("should call post and return complete on error", function(done) {
-            ajax.post("/test/not-exist.json", {}, {
+            ajax[randomPostBasedHttpMethod()]("/test/not-exist.json", {}, {
               complete: function(xhr) {
                 done();
               }
@@ -72,7 +82,7 @@
           });
 
           it("should call post and set headers X-Requested-With, Accept and Content-Type", function(done) {
-            ajax.post("/test/ajax.json", {}, {
+            ajax[randomPostBasedHttpMethod()]("/test/ajax.json", {}, {
               success: function(response, xhr) {
                 assert.equal(xhr.headers["X-Requested-With"][0], "XMLHttpRequest");
                 assert.equal(xhr.headers["Accept"][0], "*/*");
@@ -83,7 +93,7 @@
           });
 
           it("should call post and keep headers given by the user", function(done) {
-            ajax.post("/test/ajax.json", {}, {
+            ajax[randomPostBasedHttpMethod()]("/test/ajax.json", {}, {
               success: function(response, xhr) {
                 assert.equal(xhr.headers["X-Requested-With"][0], "curl");
                 assert.equal(xhr.headers["Accept"][0], "application/json");
@@ -102,7 +112,7 @@
           });
 
           it("should call post and parse XML if response Content-Type is XML", function(done) {
-            ajax.post("/test/ajax.xml", {}, {
+            ajax[randomPostBasedHttpMethod()]("/test/ajax.xml", {}, {
               success: function(response, xhr) {
                 assert.ok("querySelector" in response);
                 assert.equal(response.querySelector("person > name").textContent, "Fernanda");
@@ -113,7 +123,7 @@
           });
 
           it("should call post and parse TXT if response Content-Type is text/plain", function(done) {
-            ajax.post("/test/ajax.txt", {}, {
+            ajax[randomPostBasedHttpMethod()]("/test/ajax.txt", {}, {
               success: function(response, xhr) {
                 assert.equal(response, "Texto\n");
                 done();
@@ -122,7 +132,7 @@
           });
 
           it("should call error callback if error occurs on parse", function(done) {
-            ajax.post("/test/ajaxWrong.json", {}, {
+            ajax[randomPostBasedHttpMethod()]("/test/ajaxWrong.json", {}, {
               success: function(response, xhr) {
                 assert.fail('called success callback', 'should not call success callback');
               },
@@ -133,7 +143,7 @@
           });
 
           it("should call post and return success with CORS", function(done) {
-            ajax.post("http://127.0.0.1:8888/test/ajax.json", {}, {
+            ajax[randomPostBasedHttpMethod()]("http://127.0.0.1:8888/test/ajax.json", {}, {
               success: function(response, xhr) {
                 assert.equal(response.name, "value");
                 assert.equal(xhr.status, "200");
@@ -143,7 +153,7 @@
           });
 
           it("should call post and not include X-Requested-With header with CORS", function(done) {
-            ajax.post("http://127.0.0.1:8888/test/ajax.json", {}, {
+            ajax[randomPostBasedHttpMethod()]("http://127.0.0.1:8888/test/ajax.json", {}, {
               success: function(response, xhr) {
                 assert.isUndefined(xhr.headers["X-Requested-With"]);
                 done();
@@ -153,7 +163,7 @@
 
           it("should call complete callback always after success callbacks", function(done) {
             var calledSuccess = false;
-            ajax.post("/test/ajax.json", {}, {
+            ajax[randomPostBasedHttpMethod()]("/test/ajax.json", {}, {
               success: function(response, xhr) {
                 calledSuccess = true;
               },
@@ -168,7 +178,7 @@
 
           it("should call complete callback always after error callbacks", function(done) {
             var calledError = false;
-            ajax.post("/test/not-exist.json", {}, {
+            ajax[randomPostBasedHttpMethod()]("/test/not-exist.json", {}, {
               success: function(response, xhr) {
               },
               error: function(response, xhr) {
@@ -182,7 +192,7 @@
           });
 
           it("should not call error callback if request was successful", function(done) {
-            ajax.post("/test/ajax.json", {}, {
+            ajax[randomPostBasedHttpMethod()]("/test/ajax.json", {}, {
               error: function(response, xhr) {
                 assert.fail('called error callback', 'should not call error callback');
               },
@@ -195,7 +205,7 @@
           it("should not retry if request was successful", function(done) {
             this.timeout(1500);
             var count = 0, testIsOkTimeout;
-            ajax.post("/test/ajax.json", {}, {
+            ajax[randomPostBasedHttpMethod()]("/test/ajax.json", {}, {
               success: function(response, xhr) {
                 count++;
                 if (count === 1) {
@@ -215,7 +225,7 @@
 
           it("should call error callback if request timed out and should not retry", function(done) {
             this.timeout(3000);
-            ajax.post("/test/slow.json?count=3&test=6", {}, {
+            ajax[randomPostBasedHttpMethod()]("/test/slow.json?count=3&test=6", {}, {
               success: function(response, xhr) {
                 assert.fail('called success callback', 'should not call success callback');
               },
@@ -230,7 +240,7 @@
 
           it("should call success callback if first request was unsuccessful but retried and did ok", function(done) {
             this.timeout(3000);
-            ajax.post("/test/slow.json?count=3&test=7", {}, {
+            ajax[randomPostBasedHttpMethod()]("/test/slow.json?count=3&test=7", {}, {
               success: function() {
                 done();
               },
@@ -246,7 +256,7 @@
 
           it("should call error callback if retried and failed", function(done) {
             this.timeout(5000);
-            ajax.post("/test/slow.json?count=4&test=8", {}, {
+            ajax[randomPostBasedHttpMethod()]("/test/slow.json?count=4&test=8", {}, {
               error: function(response, xhr) {
                 done();
               }
@@ -260,7 +270,7 @@
           it("should call ajax sync", function() {
             this.timeout(5000);
             var calledSuccess = false;
-            ajax.post("/test/slow.json?count=2&test=9", {}, {
+            ajax[randomPostBasedHttpMethod()]("/test/slow.json?count=2&test=9", {}, {
               success: function(response, xhr) {
                 calledSuccess = true;
               }
@@ -273,7 +283,7 @@
           it("should call ajax async", function(done) {
             this.timeout(5000);
             var calledSuccess = false;
-            ajax.post("/test/slow.json?count=2&test=10", {}, {
+            ajax[randomPostBasedHttpMethod()]("/test/slow.json?count=2&test=10", {}, {
               success: function(response, xhr) {
                 calledSuccess = true;
                 done();

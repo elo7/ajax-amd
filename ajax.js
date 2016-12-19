@@ -125,7 +125,7 @@ define("ajax", [], function() {
 			configHeaders["X-Requested-With"] = configHeaders["X-Requested-With"] || "XMLHttpRequest";
 		}
 
-		if (method != GET) {
+		if (method !== GET) {
 			configHeaders["Content-Type"] = configHeaders["Content-Type"] || "application/x-www-form-urlencoded; charset=UTF-8";
 		}
 
