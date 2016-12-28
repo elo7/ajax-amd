@@ -5,7 +5,7 @@ var http = require('http'),
 var file = new(static.Server)({
 	headers: {
 		'Access-Control-Allow-Origin': '*',
-		'Access-Control-Allow-Methods': 'GET,POST',
+		'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE',
 		'Access-Control-Allow-Headers': 'X-Requested-With'
 	}
 });

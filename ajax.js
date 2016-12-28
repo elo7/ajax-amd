@@ -1,8 +1,10 @@
 define("ajax", [], function() {
 	"use strict";
 
-	var GET = "GET";
-	var POST = "POST";
+	var GET = "GET",
+		POST = "POST",
+		PUT = "PUT",
+		DELETE = "DELETE";
 
 	if (!String.prototype.trim) {
 		(function(){
@@ -61,10 +63,6 @@ define("ajax", [], function() {
 		}
 		url += ((/(\?)/).test(url) ? "&" : "?")  + encodedParams;
 		return url;
-	}
-
-	function getRequestObj(url) {
-		return new XMLHttpRequest();
 	}
 
 	function isSuccess(status) {
@@ -127,7 +125,7 @@ define("ajax", [], function() {
 			configHeaders["X-Requested-With"] = configHeaders["X-Requested-With"] || "XMLHttpRequest";
 		}
 
-		if (method === POST) {
+		if (method !== GET) {
 			configHeaders["Content-Type"] = configHeaders["Content-Type"] || "application/x-www-form-urlencoded; charset=UTF-8";
 		}
 
@@ -159,7 +157,7 @@ define("ajax", [], function() {
 		config.retries = config.retries ? parseInt(config.retries) : 0;
 		config.timeout = config.timeout ? parseInt(config.timeout) : 10000;
 		config.cache = !!config.cache;
-		var requestObj = getRequestObj(url);
+		var requestObj = new XMLHttpRequest();
 		var timeoutHandler;
 		config.async = !!config.async;
 
@@ -205,6 +203,14 @@ define("ajax", [], function() {
 
 		"post": function(url, data, callbacks, config){
 			makeRequest(POST, url, data, callbacks, config);
+		},
+
+		"put": function(url, data, callbacks, config){
+			makeRequest(PUT, url, data, callbacks, config);
+		},
+
+		"delete": function(url, data, callbacks, config){
+			makeRequest(DELETE, url, data, callbacks, config);
 		},
 
 		"serializeObject": function(form){
