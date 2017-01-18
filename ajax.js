@@ -73,8 +73,8 @@ define("ajax", [], function() {
 		return fn && typeof fn === "function";
 	}
 
-	function handleResponse(requestObj, callbacks, timeoutHandler, lastChance) {
-		if (requestObj.readyState !== 4) {
+	function handleResponse(xhr, callbacks, timeoutHandler, lastChance) {
+		if (xhr.readyState !== 4) {
 			return;
 		}
 
@@ -82,43 +82,43 @@ define("ajax", [], function() {
 			clearTimeout(timeoutHandler);
 		}
 
-		var responseType = requestObj.getResponseHeader("Content-Type") || "";
+		var responseType = xhr.getResponseHeader("Content-Type") || "";
 		var responseContent = "";
 		var parseError = false;
 
 		try {
 			if (responseType.indexOf("json") !== -1) {
-				responseContent = JSON.parse(requestObj.responseText);
+				responseContent = JSON.parse(xhr.responseText);
 			} else if (responseType.indexOf("xml") !== -1) {
-				responseContent = (new DOMParser()).parseFromString(requestObj.responseText,"text/xml");
+				responseContent = (new DOMParser()).parseFromString(xhr.responseText,"text/xml");
 			} else {
-				responseContent = requestObj.responseText;
+				responseContent = xhr.responseText;
 			}
 		} catch (err) {
 			parseError = true;
 		}
 
-		if (!parseError && isSuccess(requestObj.status) && isFunction(callbacks.success)) {
-			callbacks.success(responseContent, requestObj);
+		if (!parseError && isSuccess(xhr.status) && isFunction(callbacks.success)) {
+			callbacks.success(responseContent, xhr);
 			if (timeoutHandler) {
 				clearTimeout(timeoutHandler);
 				timeoutHandler = null;
 			}
-		} else if ((parseError || !isSuccess(requestObj.status)) && isFunction(callbacks.error)) {
+		} else if ((parseError || !isSuccess(xhr.status)) && isFunction(callbacks.error)) {
 			if (lastChance) {
-				callbacks.error(requestObj.statusText, requestObj);
+				callbacks.error(xhr.statusText, xhr);
 			}
 		}
 
 		if ((!parseError || lastChance) && isFunction(callbacks.complete)) {
-			callbacks.complete(requestObj);
+			callbacks.complete(xhr);
 			if (timeoutHandler) {
 				clearTimeout(timeoutHandler);
 			}
 		}
 	}
 
-	function setHeaders(url, requestObj, method, configHeaders) {
+	function setHeaders(url, xhr, method, configHeaders) {
 		configHeaders["Accept"] = configHeaders["Accept"] || "application/json";
 
 		if (!isCORS(url)) {
@@ -126,11 +126,14 @@ define("ajax", [], function() {
 		}
 
 		if (method !== GET) {
-			configHeaders["Content-Type"] = configHeaders["Content-Type"] || "application/x-www-form-urlencoded; charset=UTF-8";
+			configHeaders["Content-Type"] = configHeaders["Content-Type"] || "application/x-www-form-urlencoded;charset=UTF-8";
 		}
 
 		for (var header in configHeaders) {
-			requestObj.setRequestHeader(header, configHeaders[header]);
+			if (header === "Content-Type" && configHeaders[header] === "multipart/form-data") {
+				continue;
+			}
+			xhr.setRequestHeader(header, configHeaders[header]);
 		}
 	}
 
@@ -157,7 +160,7 @@ define("ajax", [], function() {
 		config.retries = config.retries ? parseInt(config.retries) : 0;
 		config.timeout = config.timeout ? parseInt(config.timeout) : 10000;
 		config.cache = !!config.cache;
-		var requestObj = new XMLHttpRequest();
+		var xhr = new XMLHttpRequest();
 		var timeoutHandler;
 		config.async = !!config.async;
 
@@ -167,13 +170,13 @@ define("ajax", [], function() {
 
 		url = setCache(url, config.cache);
 
-		if (requestObj) {
-			requestObj.open(method, url, config.async);
-			setHeaders(url, requestObj, method, config.headers || {});
+		if (xhr) {
+			xhr.open(method, url, config.async);
+			setHeaders(url, xhr, method, config.headers || {});
 
 			if (config.timeout) {
 				timeoutHandler = setTimeout(function() {
-					requestObj.abort();
+					xhr.abort();
 					if (config.retries > 0) {
 						config.retries--;
 						makeRequest(method, url, data, callbacks, config);
@@ -181,16 +184,23 @@ define("ajax", [], function() {
 				}, config.timeout);
 			}
 
-			requestObj.onreadystatechange = function() {
+			xhr.onreadystatechange = function() {
 				handleResponse(this, callbacks, timeoutHandler, config.retries === 0);
 			};
 			if (method === GET) {
-				requestObj.send();
+				xhr.send();
 			} else {
 				if (config.headers != undefined && config.headers["Content-Type"] === "application/json") {
-					requestObj.send(JSON.stringify(data));
+					xhr.send(JSON.stringify(data));
+				} else if(config.headers != undefined && config.headers["Content-Type"] === "multipart/form-data") {
+					var formData = new FormData();
+					var keys = Object.keys(data);
+					for (var i = 0; i < keys.length; i++) {
+						formData.append(keys[i], data[keys[i]]);
+					}
+					xhr.send(formData);
 				} else {
-					requestObj.send(urlEncodeParams(data));
+					xhr.send(urlEncodeParams(data));
 				}
 			}
 		}
@@ -222,13 +232,23 @@ define("ajax", [], function() {
 				total = formElements.length;
 
 			for (var i = 0; i < total; i++) {
+				var name = formElements[i].getAttribute("name");
 				if (!formElements[i].disabled && !formElements[i].name.isEmpty()) {
 					if (formElements[i].type === "radio" || formElements[i].type === "checkbox") {
 						if (formElements[i].checked) {
-							serialize[formElements[i].getAttribute("name")] = formElements[i].value;
+							serialize[name] = formElements[i].value;
+						}
+					} else if (formElements[i].type === "file") {
+						var files = formElements[i].files;
+						if(files.length === 1) {
+							serialize[name] = files[0];
+						} else {
+							for(var i = 0; i < files.length; i++) {
+								serialize[name + '[' + i + ']'] = files[i];
+							}
 						}
 					} else {
-						serialize[formElements[i].getAttribute("name")] = formElements[i].value;
+						serialize[name] = formElements[i].value;
 					}
 				}
 			}
