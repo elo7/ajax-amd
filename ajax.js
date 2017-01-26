@@ -243,8 +243,8 @@ define("ajax", [], function() {
 						if(files.length === 1) {
 							serialize[name] = files[0];
 						} else {
-							for(var i = 0; i < files.length; i++) {
-								serialize[name + '[' + i + ']'] = files[i];
+							for(var j = 0; j < files.length; j++) {
+								serialize[name + '[' + j + ']'] = files[j];
 							}
 						}
 					} else {
