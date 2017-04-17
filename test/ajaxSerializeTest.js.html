@@ -72,8 +72,7 @@
         describe('Ajax Serialize Method', function(){
           it("should serialize a form element and return a json", function() {
             var serialize = ajax.serializeObject(document.getElementById('form-test'));
-            var expected = {"input-text-1":"value-text-1","input-text-2":"value-text-2","input-text-3":"","input-checkbox-1-text":"value-checkbox-1","input-radio-1-text":"value-radio-1","input-hidden-1-text":"value-hidden-1","input-hidden-2-text":"value-hidden-2","textarea-1":"value-textarea-1","select-1":"2","select-2":"3","select-3":"","input-file":"","input-button":"value-button","input-submit":"value-submit","input-reset":"value-reset"};
-
+            var expected = {"input-text-1":"value-text-1","input-text-2":"value-text-2","input-text-3":"","input-checkbox-1-text":"value-checkbox-1","input-radio-1-text":"value-radio-1","input-hidden-1-text":"value-hidden-1","input-hidden-2-text":"value-hidden-2","textarea-1":"value-textarea-1","select-1":"2","select-2":"3","select-3":"","input-button":"value-button","input-submit":"value-submit","input-reset":"value-reset"};
             assert.deepEqual(expected, serialize);
           });
         });
