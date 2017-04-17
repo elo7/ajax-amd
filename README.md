@@ -8,12 +8,12 @@ Ajax.js is a library that helps making ajax requests on modern (IE >= 10) browse
 
 ## Install
 
-Install with [Bower](http://bower.io): `bower install ajax-amd`
+Install with [NPM](http://npmjs.com): `npm install elo7-ajax-amd`
 
 ## Dependency
 
-Ajax-amd depends on an [amd](http://en.wikipedia.org/wiki/Asynchronous_module_definition) implementation. We suggest [async-define](https://gist.github.com/sergiolopes/5778124) implementation for dependency lookup.
-You only need to install with [Bower](http://bower.io) and loads ajax-amd file on your page.
+Elo7-ajax-amd depends on an [amd](http://en.wikipedia.org/wiki/Asynchronous_module_definition) implementation. We suggest [async-define](https://github.com/elo7/async-define) implementation for dependency lookup.
+You only need to install it with [NPM](http://npmjs.com) and load elo7-ajax-amd file on your page.
 
 ## Methods
 
@@ -21,7 +21,7 @@ You only need to install with [Bower](http://bower.io) and loads ajax-amd file o
 `.get(url, data [,callbacks] [,config])`
 
 ###### Description:
-Exeutes an ajax request using `get` http method.
+Executes an ajax request using `get` http method.
 
 ###### Sample:
 ``` js
@@ -50,7 +50,7 @@ define(['ajax'], function(ajax) {
 `.post(url, data [,callbacks] [,config])`
 
 ###### Description:
-Exeutes an ajax request using `post` http method.
+Executes an ajax request using `post` http method.
 
 ###### Sample:
 ``` js
@@ -91,7 +91,7 @@ Executes an ajax request using `delete` http method.
 `.serializeObject(form)`
 
 ###### Description:
-Serialize form fields to json. It can be used as a data to the ajax function.
+Serializes form fields to json. It can be used as data to the ajax function.
 
 ###### Sample:
 ``` js
@@ -103,8 +103,8 @@ define(['ajax'], function(ajax) {
 
 ## License
 
-Ajax-amd is released under the [BSD](https://github.com/elo7/ajax-amd/blob/master/LICENSE). Have at it.
+Elo7-ajax-amd is released under the [BSD](https://github.com/elo7/ajax-amd/blob/master/LICENSE). Have at it.
 
 * * *
 
-Copyright :copyright: 2016 Elo7
+Copyright :copyright: 2017 Elo7
