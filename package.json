@@ -1,6 +1,6 @@
 {
-	"name": "ajax-amd",
-	"version": "1.2.2-SNAPSHOT",
+	"name": "elo7-ajax-amd",
+	"version": "1.3.0",
 	"description": "Ajax management",
 	"keywords": [
 		"JS",
@@ -14,6 +14,10 @@
 		"postinstall": "bower install"
 	},
 	"author": "Elo7",
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@github.com:elo7/ajax-amd.git"
+	},
 	"devDependencies": {
 		"mocha": "2.0.1",
 		"phantomjs-prebuilt": "2.1.14",
