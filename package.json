@@ -1,6 +1,6 @@
 {
 	"name": "elo7-ajax-amd",
-	"version": "1.3.1",
+	"version": "1.3.2",
 	"license": "BSD-3-Clause",
 	"description": "Ajax management",
 	"keywords": [
@@ -10,9 +10,7 @@
 		"post"
 	],
 	"scripts": {
-		"test": "bash test.sh",
-		"preinstall": "rm -vrf bower_components",
-		"postinstall": "bower install"
+		"test": "bash test.sh"
 	},
 	"author": "Elo7",
 	"repository": {
@@ -26,6 +24,7 @@
 		"proclaim": "2.0.0",
 		"bower": "1.4.1",
 		"node-static": "0.7.7",
-		"sleep": "3.0.1"
+		"sleep": "3.0.1",
+		"define-async": "1.2.0"
 	}
 }

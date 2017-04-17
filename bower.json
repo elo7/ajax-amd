@@ -22,8 +22,5 @@
 		"node_modules",
 		"bower_components",
 		"test"
-	],
-	"devDependencies": {
-		"async-define": "elo7/async-define"
-	}
+	]
 }
