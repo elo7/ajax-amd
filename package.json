@@ -18,13 +18,12 @@
 		"url": "git+ssh://git@github.com:elo7/ajax-amd.git"
 	},
 	"devDependencies": {
+		"define-async": "1.2.0",
 		"mocha": "2.0.1",
-		"phantomjs-prebuilt": "2.1.14",
 		"mocha-phantomjs": "4.1.0",
-		"proclaim": "2.0.0",
-		"bower": "1.4.1",
 		"node-static": "0.7.7",
 		"sleep": "3.0.1",
-		"define-async": "1.2.0"
+		"phantomjs-prebuilt": "2.1.14",
+		"proclaim": "2.0.0"
 	}
 }
