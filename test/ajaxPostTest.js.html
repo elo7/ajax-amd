@@ -86,7 +86,7 @@
               success: function(response, xhr) {
                 assert.equal(xhr.headers["X-Requested-With"][0], "XMLHttpRequest");
                 assert.equal(xhr.headers["Accept"][0], "application/json");
-                assert.equal(xhr.headers["Content-Type"][0], "application/x-www-form-urlencoded; charset=UTF-8");
+                assert.equal(xhr.headers["Content-Type"][0], "application/x-www-form-urlencoded;charset=UTF-8");
                 done();
               }
             });
@@ -121,7 +121,6 @@
                 assert.equal(xhr.headers["X-Requested-With"][0], "curl");
                 assert.equal(xhr.headers["Accept"][0], "application/json");
                 assert.equal(xhr.headers["Content-Language"][0], "zh-TW");
-                assert.equal(xhr.headers["Content-Type"][0], "multipart/form-data");
                 done();
               }
             }, {
