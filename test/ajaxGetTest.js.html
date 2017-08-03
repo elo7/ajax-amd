@@ -53,13 +53,25 @@
             });
           });
 
-          it("should call ajax and return complete on success when passing empty data", function(done) {
+          it("should call ajax and return complete on success when passing undefined or null data", function(done) {
             ajax.get("/test/parameter", {
               emptydata: null,
               bla: undefined
             }, {
               success: function(response) {
                 assert.deepEqual(response, {});
+                done();
+              }
+            }, {
+              cache: true
+            });
+          });
+
+          it("should call ajax and return complete on success when passing empty data", function(done) {
+            let parameters = { foo: "" };
+            ajax.get("/test/parameter", parameters, {
+              success: function(response) {
+                assert.deepEqual(response, parameters);
                 done();
               }
             }, {

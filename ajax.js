@@ -44,13 +44,13 @@ define("ajax", [], function() {
 		if (!isEmptyData(data)) {
 			var encodedParams = [];
 			for (var k in data) {
-				if (typeof data[k] === "object") {
-					var encodedObject = urlEncodeParams(data[k], prefix + encodeURIComponent(k) + ".");
-					if (typeof encodedObject !== 'undefined' && encodedObject !== null) {
+				if (typeof data[k] !== 'undefined' && data[k] !== null) {
+					if (typeof data[k] === "object") {
+						var encodedObject = urlEncodeParams(data[k], prefix + encodeURIComponent(k) + ".");
 						encodedParams = encodedParams.concat(encodedObject.split("&"));
+					} else {
+						encodedParams.push(prefix + encodeURIComponent(k) + "=" + encodeURIComponent(data[k]));
 					}
-				} else {
-					encodedParams.push(prefix + encodeURIComponent(k) + "=" + encodeURIComponent(data[k]));
 				}
 			}
 			return encodedParams.join("&");
