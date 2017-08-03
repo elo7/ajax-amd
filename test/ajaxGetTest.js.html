@@ -53,6 +53,35 @@
             });
           });
 
+          it("should call ajax and return complete on success when passing empty data", function(done) {
+            ajax.get("/test/parameter", {
+              emptydata: null,
+              bla: undefined
+            }, {
+              success: function(response) {
+                assert.deepEqual(response, {});
+                done();
+              }
+            }, {
+              cache: true
+            });
+          });
+
+          it("should call ajax and return complete on success with correct parameters", function(done) {
+            let parameters = {
+              param1: "test",
+              param2: "bla"
+            };
+            ajax.get("/test/parameter", parameters, {
+              success: function(response) {
+                assert.deepEqual(response, parameters);
+                done();
+              }
+            }, {
+              cache: true
+            });
+          });
+
           it("should call ajax and return error", function(done) {
             ajax.get("/test/not-exist.json", {}, {
               error: function(response, xhr) {

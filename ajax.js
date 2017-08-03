@@ -46,7 +46,9 @@ define("ajax", [], function() {
 			for (var k in data) {
 				if (typeof data[k] === "object") {
 					var encodedObject = urlEncodeParams(data[k], prefix + encodeURIComponent(k) + ".");
-					encodedParams = encodedParams.concat(encodedObject.split("&"));
+					if (typeof encodedObject !== 'undefined' && encodedObject !== null) {
+						encodedParams = encodedParams.concat(encodedObject.split("&"));
+					}
 				} else {
 					encodedParams.push(prefix + encodeURIComponent(k) + "=" + encodeURIComponent(data[k]));
 				}
