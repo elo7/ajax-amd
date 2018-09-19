@@ -1,17 +1,17 @@
 #!/bin/bash
 
+function serverRunning {
+	kill -0 $server_pid 2>/dev/null
+	echo $?
+}
+
 function tearDown {
-	if [[ "$server_pid" != "" && $(serverRunning) -gt 0 ]]; then
+	if [[ "$server_pid" != "" && $(serverRunning) -eq 0 ]]; then
 		kill -9 $server_pid
 		echo "server stopped"
 	else
 		echo "server was not running"
 	fi
-}
-
-function serverRunning {
-	let count=`ps | grep -c $server_pid`-1
-	echo $count
 }
 
 trap tearDown EXIT
@@ -21,7 +21,7 @@ server_pid=$!
 
 sleep 3
 
-if [ $(serverRunning) -eq 0 ]; then
+if [ $(serverRunning) -ne 0 ]; then
 	echo "server did not start"
 	exit 255
 fi
