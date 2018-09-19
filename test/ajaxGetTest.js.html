@@ -68,7 +68,7 @@
           });
 
           it("should call ajax and return complete on success when passing empty data", function(done) {
-            let parameters = { foo: "" };
+            var parameters = { foo: "" };
             ajax.get("/test/parameter", parameters, {
               success: function(response) {
                 assert.deepEqual(response, parameters);
@@ -80,7 +80,7 @@
           });
 
           it("should call ajax and return complete on success with correct parameters", function(done) {
-            let parameters = {
+            var parameters = {
               param1: "test",
               param2: "bla"
             };
