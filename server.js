@@ -1,6 +1,5 @@
 var http = require('http'),
-	static = require('node-static'),
-	sleep = require('sleep');
+	static = require('node-static');
 
 var file = new(static.Server)({
 	headers: {
@@ -11,6 +10,10 @@ var file = new(static.Server)({
 });
 
 var countdownPerURI = {};
+
+var sleep = function(ms) {
+	Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+};
 
 http.createServer(function (req, res) {
 	if (req.url.indexOf('parameter') !== -1) {
@@ -55,7 +58,7 @@ http.createServer(function (req, res) {
 				if (countdownPerURI[req.url] > 0) {
 					countdownPerURI[req.url]--;
 					if (countdownPerURI[req.url] > 0) {
-						sleep.sleep(1);
+						sleep(1000);
 					}
 				}
 				res.end();
