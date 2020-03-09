@@ -16,7 +16,7 @@ function tearDown {
 
 trap tearDown EXIT
 
-node server.js &
+node test/server.js &
 server_pid=$!
 
 sleep 3

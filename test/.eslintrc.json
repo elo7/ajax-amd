@@ -1,0 +1,24 @@
+{
+	"env": {
+		"browser": true,
+		"mocha": true
+	},
+	"globals": {
+		"define": false,
+		"arrayEquals": true
+	},
+	"plugins": [
+		"html"
+	],
+	"overrides": [
+		{
+			"files": "server.js",
+			"env": {
+				"node": true
+			},
+			"parserOptions": {
+				"ecmaVersion": 2019
+			}
+		}
+	]
+}
