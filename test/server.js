@@ -1,12 +1,16 @@
-var http = require('http'),
-	static = require('node-static');
+/* eslint no-warning-comments: "off" */
+/* TODO: remove the comment above after merging update-deps PR */
+'use strict';
 
-var file = new(static.Server)({
+var http = require('http'),
+	nStatic = require('node-static');
+
+var file = new(nStatic.Server)({
 	headers: {
 		'Access-Control-Allow-Origin': '*',
 		'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE',
-		'Access-Control-Allow-Headers': 'X-Requested-With'
-	}
+		'Access-Control-Allow-Headers': 'X-Requested-With',
+	},
 });
 
 var countdownPerURI = {};
@@ -15,9 +19,9 @@ var sleep = function(ms) {
 	Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 };
 
-http.createServer(function (req, res) {
+http.createServer(function(req, res) {
 	if (req.url.indexOf('parameter') !== -1) {
-		res.writeHead(200, {'Content-Type': 'application/json'});
+		res.writeHead(200, { 'Content-Type': 'application/json' });
 		let parameters = {};
 		if (req.url.indexOf('?') === -1) {
 			res.end(JSON.stringify(parameters));
@@ -32,7 +36,7 @@ http.createServer(function (req, res) {
 
 	} else {
 		file.serve(req, res, function(e) {
-			if(req.url.indexOf('jsonData') !== -1) {
+			if (req.url.indexOf('jsonData') !== -1) {
 				var body = '';
 				req.on('data', function (data) {
 					body += data;
@@ -41,7 +45,7 @@ http.createServer(function (req, res) {
 					}
 				});
 				req.on('end', function () {
-					res.writeHead(200, {'Content-Type': 'application/json'});
+					res.writeHead(200, { 'Content-Type': 'application/json' });
 					res.end(body);
 				});
 			} else if (e && req.url.indexOf('slow') !== -1) {
@@ -70,4 +74,4 @@ http.createServer(function (req, res) {
 	}
 
 }).listen(8888);
-console.log("Server starts on port 8888");
+console.log('Server starts on port 8888');

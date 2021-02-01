@@ -1,18 +1,18 @@
-define("ajax", [], function() {
-	"use strict";
+define('ajax', [], function() {
+	'use strict';
 
-	var GET = "GET",
-		POST = "POST",
-		PUT = "PUT",
-		DELETE = "DELETE";
+	var GET = 'GET',
+		POST = 'POST',
+		PUT = 'PUT',
+		DELETE = 'DELETE';
 
 	if (!String.prototype.trim) {
-		(function(){
+		(function() {
 			// Make sure we trim BOM and NBSP
 			var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
 			String.prototype.trim = function () {
-				return this.replace(rtrim, "");
-			}
+				return this.replace(rtrim, '');
+			};
 		})();
 	}
 
@@ -20,11 +20,11 @@ define("ajax", [], function() {
 		String.prototype.isEmpty = function() {
 			var value;
 
-			if(this !== null && this !== undefined){
+			if (this !== null && this !== undefined) {
 				value = this.toString();
 			}
 
-			if(value === null || value === undefined || value.trim() === "") {
+			if (value === null || value === undefined || value.trim() === '') {
 				return true;
 			}
 
@@ -32,50 +32,52 @@ define("ajax", [], function() {
 		};
 	}
 
-	function isEmptyData(data) {
-		for(var prop in data) {
-			if(data.hasOwnProperty(prop)) return false;
+	var isEmptyData = function(data) {
+		for (var prop in data) {
+			if (Object.prototype.hasOwnProperty.call(data, prop)) {
+				return false;
+			}
 		}
 		return true;
-	}
+	};
 
-	function urlEncodeParams(data, prefix) {
-		prefix = prefix || "";
+	var urlEncodeParams = function(data, prefix) {
+		prefix = prefix || '';
 		if (!isEmptyData(data)) {
 			var encodedParams = [];
 			for (var k in data) {
 				if (typeof data[k] !== 'undefined' && data[k] !== null) {
-					if (typeof data[k] === "object") {
-						var encodedObject = urlEncodeParams(data[k], prefix + encodeURIComponent(k) + ".");
-						encodedParams = encodedParams.concat(encodedObject.split("&"));
+					if (typeof data[k] === 'object') {
+						var encodedObject = urlEncodeParams(data[k], prefix + encodeURIComponent(k) + '.');
+						encodedParams = encodedParams.concat(encodedObject.split('&'));
 					} else {
-						encodedParams.push(prefix + encodeURIComponent(k) + "=" + encodeURIComponent(data[k]));
+						encodedParams.push(prefix + encodeURIComponent(k) + '=' + encodeURIComponent(data[k]));
 					}
 				}
 			}
-			return encodedParams.join("&");
+			return encodedParams.join('&');
 		}
 		return null;
-	}
+	};
 
-	function urlEncode(url, data) {
+	var urlEncode = function(url, data) {
 		var encodedParams = urlEncodeParams(data);
-		if( (encodedParams == null || url.indexOf(encodedParams)) >= 0 || (/(\&$)/).test(url) ) {
+		if ((encodedParams === null || url.indexOf(encodedParams)) >= 0 || (/(&$)/).test(url)) {
 			return url;
 		}
-		url += ((/(\?)/).test(url) ? "&" : "?")  + encodedParams;
+		url += ((/(\?)/).test(url) ? '&' : '?') + encodedParams;
 		return url;
-	}
+	};
 
-	function isSuccess(status) {
+	var isSuccess = function(status) {
 		return status >= 200 && status < 300;
-	}
+	};
 
-	function isFunction(fn) {
-		return fn && typeof fn === "function";
-	}
+	var isFunction = function(fn) {
+		return fn && typeof fn === 'function';
+	};
 
-	function handleResponse(xhr, callbacks, timeoutHandler, lastChance) {
+	var handleResponse = function(xhr, callbacks, timeoutHandler, lastChance) {
 		if (xhr.readyState !== 4) {
 			return;
 		}
@@ -84,15 +86,15 @@ define("ajax", [], function() {
 			clearTimeout(timeoutHandler);
 		}
 
-		var responseType = xhr.getResponseHeader("Content-Type") || "";
-		var responseContent = "";
+		var responseType = xhr.getResponseHeader('Content-Type') || '';
+		var responseContent = '';
 		var parseError = false;
 
 		try {
-			if (responseType.indexOf("json") !== -1) {
+			if (responseType.indexOf('json') !== -1) {
 				responseContent = JSON.parse(xhr.responseText);
-			} else if (responseType.indexOf("xml") !== -1) {
-				responseContent = (new DOMParser()).parseFromString(xhr.responseText,"text/xml");
+			} else if (responseType.indexOf('xml') !== -1) {
+				responseContent = (new DOMParser()).parseFromString(xhr.responseText, 'text/xml');
 			} else {
 				responseContent = xhr.responseText;
 			}
@@ -118,45 +120,44 @@ define("ajax", [], function() {
 				clearTimeout(timeoutHandler);
 			}
 		}
-	}
+	};
 
-	function setHeaders(url, xhr, method, configHeaders) {
-		configHeaders["Accept"] = configHeaders["Accept"] || "application/json";
+	var setHeaders = function(url, xhr, method, configHeaders) {
+		configHeaders.Accept = configHeaders.Accept || 'application/json';
 
 		if (!isCORS(url)) {
-			configHeaders["X-Requested-With"] = configHeaders["X-Requested-With"] || "XMLHttpRequest";
+			configHeaders['X-Requested-With'] = configHeaders['X-Requested-With'] || 'XMLHttpRequest';
 		}
 
 		if (method !== GET) {
-			configHeaders["Content-Type"] = configHeaders["Content-Type"] || "application/x-www-form-urlencoded;charset=UTF-8";
+			configHeaders['Content-Type'] = configHeaders['Content-Type'] || 'application/x-www-form-urlencoded;charset=UTF-8';
 		}
 
 		for (var header in configHeaders) {
-			if (header === "Content-Type" && configHeaders[header] === "multipart/form-data") {
-				continue;
+			if (header !== 'Content-Type' || configHeaders[header] !== 'multipart/form-data') {
+				xhr.setRequestHeader(header, configHeaders[header]);
 			}
-			xhr.setRequestHeader(header, configHeaders[header]);
 		}
-	}
+	};
 
-	function isCORS(url) {
+	var isCORS = function(url) {
 		var host = url.match(/\/\/(.+?)\//);
-		return host && (host[1] ? host[1] != window.location.host : false);
-	}
+		return host && (host[1] ? host[1] !== window.location.host : false);
+	};
 
-	function setCache(url, hasCache) {
+	var setCache = function(url, hasCache) {
 		if (hasCache || (/(\?|&)_t=/).test(url)) {
 			return url;
 		}
 
 		if ((/\?/).test(url)) {
-			return url + (!(/(\&$)/).test(url) ? "&_t=" : "_t=") + (+ new Date());
+			return url + (!(/(&$)/).test(url) ? '&_t=' : '_t=') + (+ new Date());
 		}
 
-		return url + "?_t=" + (+ new Date());
-	}
+		return url + '?_t=' + (+ new Date());
+	};
 
-	function makeRequest(method, url, data, callbacks, config) {
+	var makeRequest = function(method, url, data, callbacks, config) {
 		callbacks = callbacks || {};
 		config = config || {};
 		config.retries = config.retries ? parseInt(config.retries) : 0;
@@ -191,61 +192,59 @@ define("ajax", [], function() {
 			};
 			if (method === GET) {
 				xhr.send();
-			} else {
-				if (config.headers != undefined && config.headers["Content-Type"] === "application/json") {
-					xhr.send(JSON.stringify(data));
-				} else if(config.headers != undefined && config.headers["Content-Type"] === "multipart/form-data") {
-					var formData = new FormData();
-					var keys = Object.keys(data);
-					for (var i = 0; i < keys.length; i++) {
-						formData.append(keys[i], data[keys[i]]);
-					}
-					xhr.send(formData);
-				} else {
-					xhr.send(urlEncodeParams(data));
+			} else if (config.headers !== undefined && config.headers['Content-Type'] === 'application/json') {
+				xhr.send(JSON.stringify(data));
+			} else if (config.headers !== undefined && config.headers['Content-Type'] === 'multipart/form-data') {
+				var formData = new FormData();
+				var keys = Object.keys(data);
+				for (var i = 0; i < keys.length; i++) {
+					formData.append(keys[i], data[keys[i]]);
 				}
+				xhr.send(formData);
+			} else {
+				xhr.send(urlEncodeParams(data));
 			}
 		}
-	}
+	};
 
 	return {
-		"get": function(url, data, callbacks, config){
+		'get': function(url, data, callbacks, config) {
 			makeRequest(GET, url, data, callbacks, config);
 		},
 
-		"post": function(url, data, callbacks, config){
+		'post': function(url, data, callbacks, config) {
 			makeRequest(POST, url, data, callbacks, config);
 		},
 
-		"put": function(url, data, callbacks, config){
+		'put': function(url, data, callbacks, config) {
 			makeRequest(PUT, url, data, callbacks, config);
 		},
 
-		"delete": function(url, data, callbacks, config){
+		'delete': function(url, data, callbacks, config) {
 			makeRequest(DELETE, url, data, callbacks, config);
 		},
 
-		"serializeObject": function(form){
-			var inputs = Array.prototype.slice.call(form.getElementsByTagName("input")),
-				textareas = Array.prototype.slice.call(form.getElementsByTagName("textarea")),
-				selects = Array.prototype.slice.call(form.getElementsByTagName("select")),
+		'serializeObject': function(form) {
+			var inputs = Array.prototype.slice.call(form.getElementsByTagName('input')),
+				textareas = Array.prototype.slice.call(form.getElementsByTagName('textarea')),
+				selects = Array.prototype.slice.call(form.getElementsByTagName('select')),
 				formElements = inputs.concat(textareas).concat(selects),
 				serialize = {},
 				total = formElements.length;
 
 			for (var i = 0; i < total; i++) {
-				var name = formElements[i].getAttribute("name");
+				var name = formElements[i].getAttribute('name');
 				if (!formElements[i].disabled && !formElements[i].name.isEmpty()) {
-					if (formElements[i].type === "radio" || formElements[i].type === "checkbox") {
+					if (formElements[i].type === 'radio' || formElements[i].type === 'checkbox') {
 						if (formElements[i].checked) {
 							serialize[name] = formElements[i].value;
 						}
-					} else if (formElements[i].type === "file") {
+					} else if (formElements[i].type === 'file') {
 						var files = formElements[i].files;
-						if(files.length === 1) {
+						if (files.length === 1) {
 							serialize[name] = files[0];
 						} else {
-							for(var j = 0; j < files.length; j++) {
+							for (var j = 0; j < files.length; j++) {
 								serialize[name + '[' + j + ']'] = files[j];
 							}
 						}
@@ -255,6 +254,6 @@ define("ajax", [], function() {
 				}
 			}
 			return serialize;
-		}
-	}
+		},
+	};
 });
