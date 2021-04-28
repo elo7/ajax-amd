@@ -28,6 +28,6 @@
 		"mocha-chrome": "2.2.0",
 		"node-static": "0.7.11",
 		"proclaim": "3.6.0",
-		"terser": "4.6.13"
+		"terser": "5.7.0"
 	}
 }
